@@ -1,0 +1,16 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: npx wrangler pages deploy public --project-name=ats-detector
+        env:
+          CLOUDFLARE_ACCOUNT_ID: 39c192c934290776b0b406805133fa4b
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
