@@ -19,35 +19,403 @@
       --text-muted: #7A5C52;
     }
 
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
     body {
       font-family: 'EB Garamond', Georgia, serif;
-      background: var(--cream);
-      color: var(--text);
-      min-height: 100vh;
+      background: #0D0820;
+    }
+
+    /* ── SCENE ── */
+    .scene {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .sky {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        #060412 0%, #0D0820 20%, #1E1250 45%,
+        #3D2060 62%, #7A3060 76%, #B84060 88%, #E07050 100%);
+    }
+
+    /* Aurora */
+    .aurora {
+      position: absolute;
+      top: 5%; left: 10%;
+      width: 80%; height: 40%;
+      background: radial-gradient(ellipse at 50% 40%,
+        rgba(120,60,180,0.25) 0%, rgba(60,180,120,0.10) 50%, transparent 70%);
+      animation: auroraPulse 9s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes auroraPulse {
+      0%   { opacity: 0.3; transform: scaleX(0.85) scaleY(0.9); }
+      50%  { opacity: 0.8; transform: scaleX(1.15) scaleY(1.1); }
+      100% { opacity: 0.4; transform: scaleX(0.95) scaleY(0.85); }
+    }
+
+    /* Clouds */
+    .cloud {
+      position: absolute;
+      background: rgba(255,255,255,0.09);
+      border-radius: 50px;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .cloud-1 { width:220px;height:38px;top:14%;left:-240px;animation:cdrift 90s linear infinite; }
+    .cloud-1::before { width:90px;height:65px;top:-35px;left:30px; }
+    .cloud-1::after  { width:65px;height:50px;top:-28px;left:110px; }
+    .cloud-2 { width:160px;height:28px;top:24%;left:-180px;animation:cdrift 130s 25s linear infinite;opacity:.6; }
+    .cloud-2::before { width:65px;height:48px;top:-28px;left:20px; }
+    .cloud-2::after  { width:48px;height:38px;top:-22px;left:80px; }
+    .cloud-3 { width:190px;height:32px;top:8%;left:-210px;animation:cdrift 110s 55s linear infinite;opacity:.45; }
+    .cloud-3::before { width:75px;height:58px;top:-32px;left:45px; }
+    .cloud-3::after  { width:55px;height:44px;top:-24px;left:115px; }
+    @keyframes cdrift {
+      from { transform: translateX(0); }
+      to   { transform: translateX(calc(100vw + 300px)); }
+    }
+
+    /* Mountains */
+    .mountains-svg {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 68%;
+      pointer-events: none;
+    }
+
+    /* Snow ground */
+    .snow-ground {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 72px;
+      background: #E8EEF5;
+      border-radius: 60% 60% 0 0 / 30px 30px 0 0;
+      z-index: 2;
+    }
+
+    /* ── HOTEL ── */
+    .hotel {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 340px;
+      z-index: 3;
+      text-align: center;
+    }
+
+    /* Flag */
+    .hotel-flag-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
+      height: 44px;
+    }
+    .flagpole {
+      width: 2px; height: 38px;
+      background: #B8924A;
+      margin-top: 6px;
+    }
+    .flag-cloth {
+      position: absolute;
+      top: 6px; left: calc(50% + 1px);
+      width: 22px; height: 14px;
+      background: #C4706F;
+      transform-origin: left center;
+      animation: flagWave 2.4s ease-in-out infinite;
+    }
+    @keyframes flagWave {
+      0%,100% { clip-path: polygon(0 0,100% 15%,100% 85%,0 100%); }
+      50%      { clip-path: polygon(0 0,100% 0,100% 100%,0 100%); }
+    }
+
+    /* Tower */
+    .hotel-tower {
+      width: 54px; height: 32px;
+      background: #8B5A70;
+      margin: 0 auto;
+      position: relative;
+    }
+    .hotel-tower::before {
+      content: '';
+      position: absolute;
+      bottom: 100%; left: 0;
+      width: 100%; height: 22px;
+      background: #2D5A3D;
+      clip-path: polygon(0 100%,50% 0,100% 100%);
+    }
+    .tower-window {
+      position: absolute;
+      top: 6px; left: 50%;
+      transform: translateX(-50%);
+      width: 14px; height: 14px;
+      background: #F5E68A;
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* Main roof */
+    .hotel-main-roof {
+      background: #2D5A3D;
+      height: 44px;
+      clip-path: polygon(0 100%,2% 65%,5% 42%,9% 22%,15% 6%,50% 0,85% 6%,91% 22%,95% 42%,98% 65%,100% 100%);
+    }
+
+    /* Body */
+    .hotel-body {
+      background: #D4A0B0;
+      padding: 10px 10px 0;
+      border-left: 3px solid #B88098;
+      border-right: 3px solid #B88098;
+    }
+    .hotel-floor {
+      display: grid;
+      grid-template-columns: repeat(7,1fr);
+      gap: 5px;
+      margin-bottom: 7px;
+    }
+    .hotel-window {
+      height: 20px;
+      background: #F5E68A;
+      border-radius: 2px 2px 0 0;
+      transition: background 0.6s;
+      position: relative;
+    }
+    .hotel-window::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 50%;
+      transform: translateX(-50%);
+      width: 1px; height: calc(100% - 4px);
+      background: rgba(0,0,0,0.18);
+    }
+    .hotel-window.dark { background: #3A2240; }
+
+    /* Balcony floor (5 windows) */
+    .hotel-floor-5 {
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 5px;
+      margin-bottom: 7px;
+      padding: 0 22px;
+    }
+
+    .hotel-nameplate {
+      background: #8B5A70;
+      color: #F5E68A;
+      font-family: 'EB Garamond', serif;
+      font-size: 7px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 3px 0;
+    }
+
+    /* Entrance */
+    .hotel-entrance {
+      display: flex;
       justify-content: center;
-      padding: 2rem;
+      align-items: flex-end;
+      gap: 8px;
+      padding: 0 38px;
+      height: 30px;
+      background: #B88098;
+    }
+    .hotel-arch {
+      flex: 1;
+      height: 30px;
+      background: #3A1A2A;
+      border-radius: 4px 4px 0 0;
+      max-width: 30px;
+    }
+
+    /* ── FUNICULAR ── */
+    .funi-track {
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .funi-car {
+      position: absolute;
+      width: 42px; height: 30px;
+      background: #D4A0B0;
+      border: 2px solid #8B5A70;
+      border-radius: 3px;
+      z-index: 4;
+    }
+    .funi-car::before {
+      content: '';
+      position: absolute;
+      bottom: 100%; left: 50%;
+      transform: translateX(-50%);
+      width: 2px; height: 10px;
+      background: #B8924A;
+    }
+    .funi-win {
+      position: absolute;
+      top: 5px;
+      width: 11px; height: 11px;
+      background: #F5E68A;
+      border-radius: 1px;
+    }
+    .funi-win.l { left: 5px; }
+    .funi-win.r { right: 5px; }
+
+    /* ── TRAIN ── */
+    .train-track-line {
+      position: absolute;
+      bottom: 70px; left: 0;
+      width: 100%; height: 3px;
+      background: repeating-linear-gradient(to right,
+        #B8924A 0,#B8924A 22px,transparent 22px,transparent 32px);
+      z-index: 3;
+    }
+    .train-track-rail {
+      position: absolute;
+      bottom: 72px; left: 0;
+      width: 100%; height: 2px;
+      background: rgba(184,146,74,0.5);
+      z-index: 3;
+    }
+
+    .train {
+      position: absolute;
+      bottom: 72px;
+      display: flex;
+      gap: 4px;
+      z-index: 4;
+      right: -700px;
+    }
+    .locomotive {
+      width: 86px; height: 38px;
+      background: #7A2C2C;
+      border-radius: 3px 10px 0 0;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .locomotive::before {
+      content: '';
+      position: absolute;
+      right: -14px; top: 10px;
+      width: 14px; height: 22px;
+      background: #7A2C2C;
+      border-radius: 0 5px 0 0;
+    }
+    .loco-chimney {
+      position: absolute;
+      top: -14px; left: 22px;
+      width: 18px; height: 14px;
+      background: #5A1A1A;
+      border-radius: 2px 2px 0 0;
+    }
+    .loco-win {
+      position: absolute;
+      top: 6px; left: 12px;
+      width: 20px; height: 16px;
+      background: #F5E68A;
+      border-radius: 2px;
+    }
+    .steam {
+      position: absolute;
+      top: -30px; left: 19px;
+      display: flex; gap: 3px;
+    }
+    .sp {
+      width: 12px; height: 12px;
+      background: rgba(232,238,245,0.7);
+      border-radius: 50%;
+      animation: steamUp 1.6s ease-out infinite;
+    }
+    .sp:nth-child(2) { animation-delay:.3s;width:10px;height:10px; }
+    .sp:nth-child(3) { animation-delay:.6s;width:8px;height:8px; }
+    @keyframes steamUp {
+      0%   { opacity:.8; transform:translateY(0) scale(1); }
+      100% { opacity:0;  transform:translateY(-22px) scale(2.2); }
+    }
+    .loco-wheel {
+      position: absolute;
+      bottom: -9px;
+      width: 17px; height: 17px;
+      background: #2A0A0A;
+      border-radius: 50%;
+      border: 2px solid #B8924A;
+      animation: wheelSpin 0.4s linear infinite paused;
+    }
+
+    .train-car {
+      width: 62px; height: 34px;
+      background: #D4A0B0;
+      border: 2px solid #8B5A70;
+      border-radius: 3px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .train-car::before, .train-car::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      width: 13px; height: 11px;
+      background: #F5E68A;
+      border-radius: 1px;
+    }
+    .train-car::before { left: 8px; }
+    .train-car::after  { right: 8px; }
+    .car-wheel {
+      position: absolute;
+      bottom: -9px;
+      width: 15px; height: 15px;
+      background: #2A0A0A;
+      border-radius: 50%;
+      border: 2px solid #B8924A;
+      animation: wheelSpin 0.4s linear infinite paused;
+    }
+    @keyframes wheelSpin { to { transform: rotate(360deg); } }
+
+    /* Snow canvas */
+    #snow-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9;
+    }
+
+    /* ── UI CARD ── */
+    .ui-wrapper {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      padding: 1.5rem;
+      overflow-y: auto;
     }
 
     .card {
       width: 100%;
-      max-width: 560px;
-      background: #FDFAF5;
+      max-width: 500px;
+      background: rgba(253,250,245,0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1.5px solid var(--pink-deep);
-      padding: 3rem 3.5rem;
+      padding: 2.5rem 3rem;
       position: relative;
       text-align: center;
+      opacity: 0;
+      transform: scale(0.75) translateY(40px);
     }
-
-    /* Corner ornaments */
     .card::before, .card::after {
       content: '✦';
       position: absolute;
       color: var(--gold);
-      font-size: 0.75rem;
-      line-height: 1;
+      font-size: 0.7rem;
     }
     .card::before { top: 10px; left: 14px; }
     .card::after  { bottom: 10px; right: 14px; }
@@ -55,8 +423,7 @@
     .corner-tl, .corner-br {
       position: absolute;
       color: var(--gold);
-      font-size: 0.75rem;
-      line-height: 1;
+      font-size: 0.7rem;
     }
     .corner-tl { top: 10px; right: 14px; }
     .corner-br { bottom: 10px; left: 14px; }
@@ -64,8 +431,8 @@
     .header-rule {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
+      gap: .75rem;
+      margin-bottom: 1.25rem;
     }
     .header-rule::before, .header-rule::after {
       content: '';
@@ -73,37 +440,33 @@
       height: 1px;
       background: var(--pink-deep);
     }
-
     .hotel-label {
-      font-family: 'EB Garamond', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
+      font-size: .62rem;
+      letter-spacing: .25em;
       text-transform: uppercase;
       color: var(--pink-deep);
     }
 
     h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 600;
       color: var(--burgundy);
       line-height: 1.2;
-      margin-bottom: 0.4rem;
+      margin-bottom: .3rem;
     }
-
     .subtitle {
-      font-family: 'EB Garamond', serif;
       font-style: italic;
-      font-size: 1rem;
+      font-size: .95rem;
       color: var(--text-muted);
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .divider {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 2rem;
+      gap: .75rem;
+      margin-bottom: 1.5rem;
     }
     .divider::before, .divider::after {
       content: '';
@@ -112,39 +475,38 @@
       background: var(--pink);
     }
     .divider-diamond {
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       background: var(--gold);
       transform: rotate(45deg);
-      flex-shrink: 0;
     }
 
     .input-label {
       display: block;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
+      font-size: .62rem;
+      letter-spacing: .2em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 0.5rem;
+      margin-bottom: .5rem;
       text-align: left;
     }
-
     input {
       width: 100%;
       background: var(--cream);
       border: 1px solid var(--pink-deep);
       color: var(--text);
       font-family: 'EB Garamond', serif;
-      font-size: 1.05rem;
-      padding: 0.65rem 1rem;
+      font-size: 1rem;
+      padding: .65rem 1rem;
       outline: none;
-      transition: border-color 0.2s;
       text-align: center;
-      letter-spacing: 0.02em;
-      margin-bottom: 1.25rem;
+      letter-spacing: .03em;
+      margin-bottom: 1rem;
+      transition: border-color .2s, box-shadow .2s;
     }
-
-    input:focus { border-color: var(--burgundy); }
+    input:focus {
+      border-color: var(--burgundy);
+      box-shadow: 0 0 0 3px rgba(122,44,44,.1);
+    }
     input::placeholder { color: #C4A89E; font-style: italic; }
 
     button {
@@ -154,211 +516,439 @@
       border: none;
       cursor: pointer;
       font-family: 'EB Garamond', serif;
-      font-size: 0.75rem;
+      font-size: .72rem;
       font-weight: 500;
-      letter-spacing: 0.2em;
+      letter-spacing: .22em;
       text-transform: uppercase;
-      padding: 0.75rem 2rem;
-      transition: background 0.2s;
+      padding: .72rem 2rem;
+      transition: background .2s, letter-spacing .3s, transform .1s;
     }
-
-    button:hover { background: var(--burgundy-light); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button:hover { background: var(--burgundy-light); letter-spacing: .3em; }
+    button:active { transform: scale(.98); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
 
     .spinner {
       display: none;
-      margin: 1.5rem auto 0;
-      width: 20px;
-      height: 20px;
+      margin: 1.25rem auto 0;
+      width: 18px; height: 18px;
       border: 1.5px solid var(--pink);
       border-top-color: var(--burgundy);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin .8s linear infinite;
     }
     .spinner.visible { display: block; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .result {
-      display: none;
-      margin-top: 2rem;
-      text-align: center;
-    }
+    .result { display: none; margin-top: 1.5rem; text-align: center; }
     .result.visible { display: block; }
 
     .result-rule {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
+      gap: .75rem;
+      margin-bottom: 1rem;
     }
     .result-rule::before, .result-rule::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--pink);
+      content: ''; flex: 1; height: 1px; background: var(--pink);
     }
     .result-rule span {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
+      font-size: .58rem;
+      letter-spacing: .2em;
       text-transform: uppercase;
       color: var(--text-muted);
     }
 
     .ats-name {
       font-family: 'Playfair Display', serif;
-      font-size: 1.75rem;
+      font-size: 1.6rem;
       font-weight: 600;
       color: var(--burgundy);
-      margin-bottom: 0.35rem;
+      margin-bottom: .3rem;
     }
-
-    .ats-url {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-style: italic;
-      word-break: break-all;
-    }
+    .ats-url { font-size: .73rem; color: var(--text-muted); font-style: italic; word-break: break-all; }
     .ats-url a { color: var(--text-muted); text-decoration: none; }
     .ats-url a:hover { color: var(--burgundy); }
 
-    .not-found {
-      font-style: italic;
-      color: var(--text-muted);
-      font-size: 1rem;
-    }
+    .not-found { font-style: italic; color: var(--text-muted); font-size: .95rem; }
+    .ats-item + .ats-item { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--pink); }
 
-    .ats-item + .ats-item {
-      margin-top: 1.25rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--pink);
-    }
+    .scanned-section { margin-top: 1.25rem; padding-top: .75rem; border-top: 1px solid var(--pink); }
+    .scanned-label { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: #C4A89E; margin-bottom: .35rem; }
+    .scanned-url { font-size: .7rem; color: #C4A89E; display: block; line-height: 1.6; }
 
-    .scanned-section {
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--pink);
-    }
-
-    .scanned-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #C4A89E;
-      margin-bottom: 0.5rem;
-    }
-
-    .scanned-url {
-      font-size: 0.72rem;
-      color: #C4A89E;
-      font-family: 'EB Garamond', serif;
-      display: block;
-      line-height: 1.6;
-    }
-
-    .footer-label {
-      margin-top: 2rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #C4A89E;
-    }
+    .footer-label { margin-top: 1.5rem; font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: #C4A89E; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <span class="corner-tl">✦</span>
-    <span class="corner-br">✦</span>
 
-    <div class="header-rule">
-      <span class="hotel-label">Established MMXXVI</span>
+<!-- ====== SCENE ====== -->
+<div class="scene">
+  <div class="sky"></div>
+  <div class="aurora"></div>
+
+  <!-- Stars -->
+  <canvas id="stars-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
+
+  <!-- Clouds -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <!-- Mountains -->
+  <svg class="mountains-svg" viewBox="0 0 1440 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="0,500 180,130 360,500" fill="#2A1D55"/>
+    <polygon points="120,500 340,88,560,500" fill="#231750"/>
+    <polygon points="320,500 560,105,780,500" fill="#2A1D55"/>
+    <polygon points="510,500 730,68,940,500" fill="#231750"/>
+    <polygon points="700,500 910,95,1090,500" fill="#2A1D55"/>
+    <polygon points="880,500 1080,78,1270,500" fill="#231750"/>
+    <polygon points="1080,500 1270,108,1440,360,1440,500" fill="#2A1D55"/>
+    <!-- Snow caps far -->
+    <polygon points="180,130 212,182,148,182" fill="#DDE5F0" opacity=".85"/>
+    <polygon points="340,88 378,152,302,152" fill="#DDE5F0" opacity=".85"/>
+    <polygon points="560,105 595,162,525,162" fill="#DDE5F0" opacity=".85"/>
+    <polygon points="730,68 770,138,690,138" fill="#DDE5F0" opacity=".85"/>
+    <polygon points="910,95 948,155,872,155" fill="#DDE5F0" opacity=".85"/>
+    <polygon points="1080,78 1118,145,1042,145" fill="#DDE5F0" opacity=".85"/>
+    <polygon points="1270,108 1306,165,1234,165" fill="#DDE5F0" opacity=".85"/>
+    <!-- Near mountains -->
+    <polygon points="0,500 90,285,240,500" fill="#140E2A"/>
+    <polygon points="60,500 280,225,470,500" fill="#140E2A"/>
+    <polygon points="340,500 530,205,700,500" fill="#140E2A"/>
+    <polygon points="600,500 800,185,980,500" fill="#140E2A"/>
+    <polygon points="840,500 1010,225,1185,500" fill="#140E2A"/>
+    <polygon points="1080,500 1240,255,1440,410,1440,500" fill="#140E2A"/>
+    <!-- Near snow caps -->
+    <polygon points="90,285 115,330,65,330" fill="#EEF2F8" opacity=".9"/>
+    <polygon points="280,225 310,278,250,278" fill="#EEF2F8" opacity=".9"/>
+    <polygon points="530,205 560,258,500,258" fill="#EEF2F8" opacity=".9"/>
+    <polygon points="800,185 832,242,768,242" fill="#EEF2F8" opacity=".9"/>
+    <polygon points="1010,225 1040,278,980,278" fill="#EEF2F8" opacity=".9"/>
+  </svg>
+
+  <!-- Snow ground -->
+  <div class="snow-ground" style="z-index:2;"></div>
+
+  <!-- Train rails -->
+  <div class="train-track-rail"></div>
+  <div class="train-track-line"></div>
+
+  <!-- Hotel -->
+  <div class="hotel" id="hotel">
+    <!-- Flag -->
+    <div class="hotel-flag-wrap">
+      <div class="flagpole"></div>
+      <div class="flag-cloth"></div>
     </div>
-
-    <h1>ATS Detector</h1>
-    <p class="subtitle">Uncover the recruitment software behind any company.</p>
-
-    <div class="divider"><div class="divider-diamond"></div></div>
-
-    <label class="input-label" for="domain">Company Domain</label>
-    <input
-      id="domain"
-      type="text"
-      placeholder="example.com"
-      autocomplete="off"
-      spellcheck="false"
-    />
-    <button id="detect-btn" onclick="detect()">Enquire</button>
-
-    <div class="spinner" id="spinner"></div>
-
-    <div class="result" id="result"></div>
-
-    <p class="footer-label">ats.burkeruder.ai</p>
+    <!-- Tower -->
+    <div class="hotel-tower">
+      <div class="tower-window"></div>
+    </div>
+    <!-- Main roof -->
+    <div class="hotel-main-roof"></div>
+    <!-- Floors -->
+    <div class="hotel-body">
+      <div class="hotel-floor">
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+      </div>
+      <div class="hotel-floor">
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window" data-win></div>
+      </div>
+      <div class="hotel-floor">
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window" data-win></div>
+      </div>
+      <div class="hotel-floor-5">
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+        <div class="hotel-window dark" data-win></div>
+        <div class="hotel-window" data-win></div>
+      </div>
+      <div class="hotel-nameplate">Grand Budapest · ATS Detector</div>
+    </div>
+    <div class="hotel-entrance">
+      <div class="hotel-arch"></div>
+      <div class="hotel-arch"></div>
+      <div class="hotel-arch"></div>
+    </div>
   </div>
 
-  <script>
-    document.getElementById('domain').addEventListener('keydown', e => {
-      if (e.key === 'Enter') detect();
+  <!-- Funicular SVG tracks -->
+  <svg id="funi-tracks-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;" xmlns="http://www.w3.org/2000/svg"></svg>
+
+  <!-- Funicular car -->
+  <div class="funi-car" id="funi-car">
+    <div class="funi-win l"></div>
+    <div class="funi-win r"></div>
+  </div>
+
+  <!-- Train -->
+  <div class="train" id="train">
+    <div class="locomotive">
+      <div class="loco-chimney"></div>
+      <div class="loco-win"></div>
+      <div class="steam">
+        <div class="sp"></div>
+        <div class="sp"></div>
+        <div class="sp"></div>
+      </div>
+      <div class="loco-wheel" style="left:8px;"></div>
+      <div class="loco-wheel" style="left:30px;"></div>
+      <div class="loco-wheel" style="left:52px;"></div>
+    </div>
+    <div class="train-car">
+      <div class="car-wheel" style="left:6px;"></div>
+      <div class="car-wheel" style="right:6px;"></div>
+    </div>
+    <div class="train-car">
+      <div class="car-wheel" style="left:6px;"></div>
+      <div class="car-wheel" style="right:6px;"></div>
+    </div>
+    <div class="train-car">
+      <div class="car-wheel" style="left:6px;"></div>
+      <div class="car-wheel" style="right:6px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Snow -->
+<canvas id="snow-canvas"></canvas>
+
+<!-- ====== UI ====== -->
+<div class="ui-wrapper">
+  <div class="card" id="card">
+    <span class="corner-tl">✦</span>
+    <span class="corner-br">✦</span>
+    <div class="header-rule"><span class="hotel-label">Established MMXXVI</span></div>
+    <h1>ATS Detector</h1>
+    <p class="subtitle">Uncover the recruitment software behind any company.</p>
+    <div class="divider"><div class="divider-diamond"></div></div>
+    <label class="input-label" for="domain">Company Domain</label>
+    <input id="domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false"/>
+    <button id="detect-btn" onclick="detect()">Enquire</button>
+    <div class="spinner" id="spinner"></div>
+    <div class="result" id="result"></div>
+    <p class="footer-label">ats.burkeruder.ai</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+// ── CARD ENTRANCE ──
+gsap.to('#card', {
+  opacity: 1, scale: 1, y: 0,
+  duration: 1.4, ease: 'back.out(1.6)', delay: 0.4
+});
+
+// ── STARS ──
+const starCanvas = document.getElementById('stars-canvas');
+const sCtx = starCanvas.getContext('2d');
+function initStars() {
+  starCanvas.width  = window.innerWidth;
+  starCanvas.height = window.innerHeight;
+  sCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+  for (let i = 0; i < 160; i++) {
+    const x = Math.random() * starCanvas.width;
+    const y = Math.random() * starCanvas.height * 0.62;
+    const r = Math.random() * 1.6;
+    sCtx.beginPath();
+    sCtx.arc(x, y, r, 0, Math.PI * 2);
+    sCtx.fillStyle = `rgba(255,250,230,${0.35 + Math.random() * 0.65})`;
+    sCtx.fill();
+  }
+}
+initStars();
+// Twinkle
+setInterval(() => {
+  const x = Math.random() * starCanvas.width;
+  const y = Math.random() * starCanvas.height * 0.55;
+  sCtx.clearRect(x - 3, y - 3, 6, 6);
+  sCtx.beginPath();
+  sCtx.arc(x, y, Math.random() * 1.6, 0, Math.PI * 2);
+  sCtx.fillStyle = `rgba(255,250,230,${0.1 + Math.random()})`;
+  sCtx.fill();
+}, 70);
+
+// ── SNOW ──
+const sc = document.getElementById('snow-canvas');
+const cx = sc.getContext('2d');
+function resizeSC() { sc.width = window.innerWidth; sc.height = window.innerHeight; }
+resizeSC();
+window.addEventListener('resize', resizeSC);
+const flakes = Array.from({ length: 150 }, () => ({
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight,
+  r: 0.5 + Math.random() * 2.5,
+  vy: 0.3 + Math.random() * 1.1,
+  vx: (Math.random() - 0.5) * 0.35,
+  o: 0.35 + Math.random() * 0.65
+}));
+function snowLoop() {
+  cx.clearRect(0, 0, sc.width, sc.height);
+  for (const f of flakes) {
+    f.y += f.vy; f.x += f.vx;
+    if (f.y > sc.height) { f.y = -5; f.x = Math.random() * sc.width; }
+    if (f.x > sc.width) f.x = 0;
+    if (f.x < 0) f.x = sc.width;
+    cx.beginPath();
+    cx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    cx.fillStyle = `rgba(232,238,245,${f.o})`;
+    cx.fill();
+  }
+  requestAnimationFrame(snowLoop);
+}
+snowLoop();
+
+// ── WINDOW FLICKER ──
+const wins = document.querySelectorAll('[data-win]');
+setInterval(() => {
+  wins[Math.floor(Math.random() * wins.length)].classList.toggle('dark');
+}, 500);
+
+// ── FUNICULAR ──
+function setupFunicular() {
+  const hotel = document.getElementById('hotel');
+  const rect  = hotel.getBoundingClientRect();
+  const cx    = rect.left + rect.width / 2;
+  const hotelBottom = rect.bottom;
+
+  // Track endpoints
+  const lx1 = cx - rect.width * 0.7, ly1 = hotelBottom - 10;
+  const lx2 = cx - rect.width * 0.2, ly2 = hotelBottom - 140;
+  const rx1 = cx + rect.width * 0.7, ry1 = hotelBottom - 10;
+  const rx2 = cx + rect.width * 0.2, ry2 = hotelBottom - 140;
+
+  // Draw SVG tracks
+  const svg = document.getElementById('funi-tracks-svg');
+  svg.innerHTML = `
+    <line x1="${lx1}" y1="${ly1}" x2="${lx2}" y2="${ly2}" stroke="rgba(184,146,74,0.55)" stroke-width="3"/>
+    <line x1="${rx1}" y1="${ry1}" x2="${rx2}" y2="${ry2}" stroke="rgba(184,146,74,0.55)" stroke-width="3"/>
+  `;
+
+  // Animate car along left track
+  const car  = document.getElementById('funi-car');
+  let goingUp = false;
+
+  function moveCar() {
+    goingUp = !goingUp;
+    const tx = goingUp ? lx2 : lx1;
+    const ty = goingUp ? ly2 : ly1;
+    gsap.to(car, {
+      left: tx - 21,
+      top: ty - 30,
+      duration: 6,
+      ease: 'power1.inOut',
+      onComplete: () => setTimeout(moveCar, 1800)
     });
+  }
 
-    async function detect() {
-      const input = document.getElementById('domain');
-      const btn = document.getElementById('detect-btn');
-      const spinner = document.getElementById('spinner');
-      const result = document.getElementById('result');
+  car.style.left = (lx1 - 21) + 'px';
+  car.style.top  = (ly1 - 30) + 'px';
+  car.style.position = 'absolute';
+  setTimeout(moveCar, 2500);
+}
 
-      const domain = input.value.trim();
-      if (!domain) return;
+// Run after GSAP card animation so hotel is positioned
+setTimeout(setupFunicular, 600);
+window.addEventListener('resize', setupFunicular);
 
-      btn.disabled = true;
-      spinner.classList.add('visible');
-      result.classList.remove('visible');
+// ── TRAIN ──
+const train = document.getElementById('train');
+const wheels = train.querySelectorAll('.loco-wheel, .car-wheel');
 
-      try {
-        const res = await fetch(`/api/detect?domain=${encodeURIComponent(domain)}`);
-        const data = await res.json();
+function runTrain() {
+  const vw = window.innerWidth;
+  gsap.set(train, { x: vw + 50 });
+  wheels.forEach(w => w.style.animationPlayState = 'running');
+  gsap.to(train, {
+    x: -(700),
+    duration: 9 + Math.random() * 4,
+    ease: 'none',
+    onComplete: () => {
+      wheels.forEach(w => w.style.animationPlayState = 'paused');
+      setTimeout(runTrain, (18 + Math.random() * 22) * 1000);
+    }
+  });
+}
+setTimeout(runTrain, 4000);
 
-        if (data.error) {
-          result.innerHTML = `<p class="not-found">${data.error}</p>`;
-        } else if (!data.found) {
-          result.innerHTML = `
-            <div class="result-rule"><span>Result</span></div>
-            <p class="not-found">No known ATS detected for <em>${data.domain}</em>.</p>
-            ${scannedHtml(data.checkedUrls)}
-          `;
-        } else {
-          const items = data.detected.map(d => `
-            <div class="ats-item">
-              <div class="ats-name">${d.name}</div>
-              ${d.url ? `<div class="ats-url"><a href="${d.url}" target="_blank" rel="noopener">${d.url}</a></div>` : ''}
-            </div>
-          `).join('');
+// ── UI ──
+document.getElementById('domain').addEventListener('keydown', e => {
+  if (e.key === 'Enter') detect();
+});
 
-          result.innerHTML = `
-            <div class="result-rule"><span>Detected</span></div>
-            ${items}
-            ${scannedHtml(data.checkedUrls)}
-          `;
-        }
+async function detect() {
+  const input = document.getElementById('domain');
+  const btn   = document.getElementById('detect-btn');
+  const spin  = document.getElementById('spinner');
+  const res   = document.getElementById('result');
+  const domain = input.value.trim();
+  if (!domain) return;
 
-        result.classList.add('visible');
-      } catch {
-        result.innerHTML = `<p class="not-found">Something went wrong. Please try again.</p>`;
-        result.classList.add('visible');
-      } finally {
-        btn.disabled = false;
-        spinner.classList.remove('visible');
-      }
+  btn.disabled = true;
+  spin.classList.add('visible');
+  res.classList.remove('visible');
+
+  try {
+    const r = await fetch(`/api/detect?domain=${encodeURIComponent(domain)}`);
+    const data = await r.json();
+
+    if (data.error) {
+      res.innerHTML = `<p class="not-found">${data.error}</p>`;
+    } else if (!data.found) {
+      res.innerHTML = `
+        <div class="result-rule"><span>Result</span></div>
+        <p class="not-found">No known ATS detected for <em>${data.domain}</em>.</p>
+        ${scannedHtml(data.checkedUrls)}`;
+    } else {
+      const items = data.detected.map(d => `
+        <div class="ats-item">
+          <div class="ats-name">${d.name}</div>
+          ${d.url ? `<div class="ats-url"><a href="${d.url}" target="_blank" rel="noopener">${d.url}</a></div>` : ''}
+        </div>`).join('');
+      res.innerHTML = `
+        <div class="result-rule"><span>Detected</span></div>
+        ${items}
+        ${scannedHtml(data.checkedUrls)}`;
     }
 
-    function scannedHtml(urls) {
-      if (!urls || !urls.length) return '';
-      return `
-        <div class="scanned-section">
-          <div class="scanned-label">Pages scanned</div>
-          ${urls.map(u => `<span class="scanned-url">${u}</span>`).join('')}
-        </div>
-      `;
-    }
-  </script>
+    res.classList.add('visible');
+    gsap.from('#result', { opacity: 0, y: 18, duration: 0.7, ease: 'power3.out' });
+    gsap.from('#result .ats-name', { opacity: 0, y: 12, duration: 0.9, delay: 0.15, ease: 'back.out(2)' });
+  } catch {
+    res.innerHTML = `<p class="not-found">Something went wrong. Please try again.</p>`;
+    res.classList.add('visible');
+  } finally {
+    btn.disabled = false;
+    spin.classList.remove('visible');
+  }
+}
+
+function scannedHtml(urls) {
+  if (!urls?.length) return '';
+  return `<div class="scanned-section">
+    <div class="scanned-label">Pages scanned</div>
+    ${urls.map(u => `<span class="scanned-url">${u}</span>`).join('')}
+  </div>`;
+}
+</script>
 </body>
 </html>
