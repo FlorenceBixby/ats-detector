@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Detector</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0a0a0a;
+      color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    input {
+      flex: 1;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #e8e8e8;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus { border-color: #555; }
+    input::placeholder { color: #444; }
+
+    button {
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .result {
+      display: none;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+
+    .result.visible { display: block; }
+
+    .result-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #555;
+      margin-bottom: 0.75rem;
+    }
+
+    .ats-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .ats-url {
+      font-size: 0.8rem;
+      color: #555;
+      word-break: break-all;
+    }
+
+    .ats-url a { color: #555; text-decoration: none; }
+    .ats-url a:hover { color: #888; }
+
+    .not-found {
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    .multiple { display: flex; flex-direction: column; gap: 1rem; }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #333;
+      border-top-color: #888;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 0 auto;
+    }
+
+    .spinner.visible { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .checked-urls {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #1e1e1e;
+    }
+
+    .checked-urls .result-label { margin-bottom: 0.5rem; }
+
+    .url-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .url-list span {
+      font-size: 0.75rem;
+      color: #444;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ATS Detector</h1>
+    <p class="subtitle">Enter a company domain to find their HR/recruiting software.</p>
+
+    <div class="input-row">
+      <input
+        id="domain"
+        type="text"
+        placeholder="e.g. cloudflare.com"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button id="detect-btn" onclick="detect()">Detect</button>
+    </div>
+
+    <div class="spinner" id="spinner"></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById("domain").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") detect();
+    });
+
+    async function detect() {
+      const input = document.getElementById("domain");
+      const btn = document.getElementById("detect-btn");
+      const spinner = document.getElementById("spinner");
+      const result = document.getElementById("result");
+
+      let domain = input.value.trim();
+      if (!domain) return;
+
+      btn.disabled = true;
+      spinner.classList.add("visible");
+      result.classList.remove("visible");
+
+      try {
+        const res = await fetch(`/api/detect?domain=${encodeURIComponent(domain)}`);
+        const data = await res.json();
+
+        if (data.error) {
+          result.innerHTML = `<p class="not-found">${data.error}</p>`;
+        } else if (!data.found) {
+          result.innerHTML = `
+            <p class="not-found">No known ATS detected for <strong>${data.domain}</strong>.</p>
+            ${checkedUrlsHtml(data.checkedUrls)}
+          `;
+        } else {
+          const items = data.detected.map(d => `
+            <div>
+              <div class="result-label">ATS / HR Software</div>
+              <div class="ats-name">${d.name}</div>
+              ${d.url ? `<div class="ats-url"><a href="${d.url}" target="_blank" rel="noopener">${d.url}</a></div>` : ""}
+            </div>
+          `).join("");
+
+          result.innerHTML = `
+            <div class="multiple">${items}</div>
+            ${checkedUrlsHtml(data.checkedUrls)}
+          `;
+        }
+
+        result.classList.add("visible");
+      } catch (err) {
+        result.innerHTML = `<p class="not-found">Something went wrong. Try again.</p>`;
+        result.classList.add("visible");
+      } finally {
+        btn.disabled = false;
+        spinner.classList.remove("visible");
+      }
+    }
+
+    function checkedUrlsHtml(urls) {
+      if (!urls || !urls.length) return "";
+      return `
+        <div class="checked-urls">
+          <div class="result-label">Pages scanned</div>
+          <div class="url-list">
+            ${urls.map(u => `<span>${u}</span>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
