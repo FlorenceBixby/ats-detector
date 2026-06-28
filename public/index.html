@@ -4,13 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ATS Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #F7F0E6;
+      --pink: #E8C4C0;
+      --pink-deep: #C4706F;
+      --burgundy: #7A2C2C;
+      --burgundy-light: #9B3D3D;
+      --gold: #B8924A;
+      --text: #2C1810;
+      --text-muted: #7A5C52;
+    }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0a0a0a;
-      color: #e8e8e8;
+      font-family: 'EB Garamond', Georgia, serif;
+      background: var(--cream);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -19,174 +31,287 @@
       padding: 2rem;
     }
 
-    .container {
+    .card {
       width: 100%;
-      max-width: 600px;
+      max-width: 560px;
+      background: #FDFAF5;
+      border: 1.5px solid var(--pink-deep);
+      padding: 3rem 3.5rem;
+      position: relative;
+      text-align: center;
+    }
+
+    /* Corner ornaments */
+    .card::before, .card::after {
+      content: '✦';
+      position: absolute;
+      color: var(--gold);
+      font-size: 0.75rem;
+      line-height: 1;
+    }
+    .card::before { top: 10px; left: 14px; }
+    .card::after  { bottom: 10px; right: 14px; }
+
+    .corner-tl, .corner-br {
+      position: absolute;
+      color: var(--gold);
+      font-size: 0.75rem;
+      line-height: 1;
+    }
+    .corner-tl { top: 10px; right: 14px; }
+    .corner-br { bottom: 10px; left: 14px; }
+
+    .header-rule {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .header-rule::before, .header-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--pink-deep);
+    }
+
+    .hotel-label {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--pink-deep);
     }
 
     h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.5px;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--burgundy);
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
     }
 
     .subtitle {
-      color: #888;
-      font-size: 0.95rem;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text-muted);
       margin-bottom: 2rem;
     }
 
-    .input-row {
+    .divider {
       display: flex;
+      align-items: center;
       gap: 0.75rem;
       margin-bottom: 2rem;
     }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--pink);
+    }
+    .divider-diamond {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-align: left;
+    }
 
     input {
-      flex: 1;
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      color: #e8e8e8;
-      font-size: 1rem;
-      padding: 0.75rem 1rem;
+      width: 100%;
+      background: var(--cream);
+      border: 1px solid var(--pink-deep);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      padding: 0.65rem 1rem;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.2s;
+      text-align: center;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.25rem;
     }
 
-    input:focus { border-color: #555; }
-    input::placeholder { color: #444; }
+    input:focus { border-color: var(--burgundy); }
+    input::placeholder { color: #C4A89E; font-style: italic; }
 
     button {
-      background: #fff;
-      color: #000;
+      width: 100%;
+      background: var(--burgundy);
+      color: var(--cream);
       border: none;
-      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 0.75rem 1.5rem;
-      transition: opacity 0.15s;
-      white-space: nowrap;
-    }
-
-    button:hover { opacity: 0.85; }
-    button:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .result {
-      display: none;
-      background: #111;
-      border: 1px solid #222;
-      border-radius: 10px;
-      padding: 1.5rem;
-    }
-
-    .result.visible { display: block; }
-
-    .result-label {
+      font-family: 'EB Garamond', serif;
       font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #555;
-      margin-bottom: 0.75rem;
+      padding: 0.75rem 2rem;
+      transition: background 0.2s;
     }
 
-    .ats-name {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.5rem;
-    }
-
-    .ats-url {
-      font-size: 0.8rem;
-      color: #555;
-      word-break: break-all;
-    }
-
-    .ats-url a { color: #555; text-decoration: none; }
-    .ats-url a:hover { color: #888; }
-
-    .not-found {
-      color: #555;
-      font-size: 0.95rem;
-    }
-
-    .multiple { display: flex; flex-direction: column; gap: 1rem; }
+    button:hover { background: var(--burgundy-light); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .spinner {
       display: none;
-      width: 18px;
-      height: 18px;
-      border: 2px solid #333;
-      border-top-color: #888;
+      margin: 1.5rem auto 0;
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid var(--pink);
+      border-top-color: var(--burgundy);
       border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      margin: 0 auto;
+      animation: spin 0.8s linear infinite;
     }
-
     .spinner.visible { display: block; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .checked-urls {
+    .result {
+      display: none;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .result.visible { display: block; }
+
+    .result-rule {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .result-rule::before, .result-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--pink);
+    }
+    .result-rule span {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .ats-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--burgundy);
+      margin-bottom: 0.35rem;
+    }
+
+    .ats-url {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-style: italic;
+      word-break: break-all;
+    }
+    .ats-url a { color: var(--text-muted); text-decoration: none; }
+    .ats-url a:hover { color: var(--burgundy); }
+
+    .not-found {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .ats-item + .ats-item {
       margin-top: 1.25rem;
       padding-top: 1.25rem;
-      border-top: 1px solid #1e1e1e;
+      border-top: 1px solid var(--pink);
     }
 
-    .checked-urls .result-label { margin-bottom: 0.5rem; }
-
-    .url-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
+    .scanned-section {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--pink);
     }
 
-    .url-list span {
-      font-size: 0.75rem;
-      color: #444;
-      font-family: monospace;
+    .scanned-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #C4A89E;
+      margin-bottom: 0.5rem;
+    }
+
+    .scanned-url {
+      font-size: 0.72rem;
+      color: #C4A89E;
+      font-family: 'EB Garamond', serif;
+      display: block;
+      line-height: 1.6;
+    }
+
+    .footer-label {
+      margin-top: 2rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #C4A89E;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>ATS Detector</h1>
-    <p class="subtitle">Enter a company domain to find their HR/recruiting software.</p>
+  <div class="card">
+    <span class="corner-tl">✦</span>
+    <span class="corner-br">✦</span>
 
-    <div class="input-row">
-      <input
-        id="domain"
-        type="text"
-        placeholder="e.g. cloudflare.com"
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <button id="detect-btn" onclick="detect()">Detect</button>
+    <div class="header-rule">
+      <span class="hotel-label">Established MMXXVI</span>
     </div>
 
+    <h1>ATS Detector</h1>
+    <p class="subtitle">Uncover the recruitment software behind any company.</p>
+
+    <div class="divider"><div class="divider-diamond"></div></div>
+
+    <label class="input-label" for="domain">Company Domain</label>
+    <input
+      id="domain"
+      type="text"
+      placeholder="example.com"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button id="detect-btn" onclick="detect()">Enquire</button>
+
     <div class="spinner" id="spinner"></div>
+
     <div class="result" id="result"></div>
+
+    <p class="footer-label">ats.burkeruder.ai</p>
   </div>
 
   <script>
-    document.getElementById("domain").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") detect();
+    document.getElementById('domain').addEventListener('keydown', e => {
+      if (e.key === 'Enter') detect();
     });
 
     async function detect() {
-      const input = document.getElementById("domain");
-      const btn = document.getElementById("detect-btn");
-      const spinner = document.getElementById("spinner");
-      const result = document.getElementById("result");
+      const input = document.getElementById('domain');
+      const btn = document.getElementById('detect-btn');
+      const spinner = document.getElementById('spinner');
+      const result = document.getElementById('result');
 
-      let domain = input.value.trim();
+      const domain = input.value.trim();
       if (!domain) return;
 
       btn.disabled = true;
-      spinner.classList.add("visible");
-      result.classList.remove("visible");
+      spinner.classList.add('visible');
+      result.classList.remove('visible');
 
       try {
         const res = await fetch(`/api/detect?domain=${encodeURIComponent(domain)}`);
@@ -196,42 +321,41 @@
           result.innerHTML = `<p class="not-found">${data.error}</p>`;
         } else if (!data.found) {
           result.innerHTML = `
-            <p class="not-found">No known ATS detected for <strong>${data.domain}</strong>.</p>
-            ${checkedUrlsHtml(data.checkedUrls)}
+            <div class="result-rule"><span>Result</span></div>
+            <p class="not-found">No known ATS detected for <em>${data.domain}</em>.</p>
+            ${scannedHtml(data.checkedUrls)}
           `;
         } else {
           const items = data.detected.map(d => `
-            <div>
-              <div class="result-label">ATS / HR Software</div>
+            <div class="ats-item">
               <div class="ats-name">${d.name}</div>
-              ${d.url ? `<div class="ats-url"><a href="${d.url}" target="_blank" rel="noopener">${d.url}</a></div>` : ""}
+              ${d.url ? `<div class="ats-url"><a href="${d.url}" target="_blank" rel="noopener">${d.url}</a></div>` : ''}
             </div>
-          `).join("");
+          `).join('');
 
           result.innerHTML = `
-            <div class="multiple">${items}</div>
-            ${checkedUrlsHtml(data.checkedUrls)}
+            <div class="result-rule"><span>Detected</span></div>
+            ${items}
+            ${scannedHtml(data.checkedUrls)}
           `;
         }
 
-        result.classList.add("visible");
-      } catch (err) {
-        result.innerHTML = `<p class="not-found">Something went wrong. Try again.</p>`;
-        result.classList.add("visible");
+        result.classList.add('visible');
+      } catch {
+        result.innerHTML = `<p class="not-found">Something went wrong. Please try again.</p>`;
+        result.classList.add('visible');
       } finally {
         btn.disabled = false;
-        spinner.classList.remove("visible");
+        spinner.classList.remove('visible');
       }
     }
 
-    function checkedUrlsHtml(urls) {
-      if (!urls || !urls.length) return "";
+    function scannedHtml(urls) {
+      if (!urls || !urls.length) return '';
       return `
-        <div class="checked-urls">
-          <div class="result-label">Pages scanned</div>
-          <div class="url-list">
-            ${urls.map(u => `<span>${u}</span>`).join("")}
-          </div>
+        <div class="scanned-section">
+          <div class="scanned-label">Pages scanned</div>
+          ${urls.map(u => `<span class="scanned-url">${u}</span>`).join('')}
         </div>
       `;
     }
