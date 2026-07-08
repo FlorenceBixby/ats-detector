@@ -11,7 +11,7 @@ const ATS_PATTERNS = [
   { pattern: /workable\.com/i,         name: "Workable" },
   { pattern: /jobvite\.com/i,          name: "Jobvite" },
   { pattern: /rippling\.com/i,         name: "Rippling" },
-  { pattern: /successfactors\.com/i,   name: "SAP SuccessFactors" },
+  { pattern: /successfactors\.com|successfactors\.eu/i, name: "SAP SuccessFactors" },
   { pattern: /oraclecloud\.com/i,      name: "Oracle HCM" },
   { pattern: /ashbyhq\.com/i,          name: "Ashby" },
   { pattern: /breezy\.hr/i,            name: "Breezy HR" },
@@ -29,15 +29,21 @@ const ATS_PATTERNS = [
   { pattern: /gusto\.com/i,            name: "Gusto" },
   { pattern: /phenom\.com|phenompeople\.com/i, name: "Phenom" },
   { pattern: /eightfold\.ai/i,         name: "Eightfold" },
-  { pattern: /paradox\.ai|olivia\.paradox/i,   name: "Paradox" },
+  { pattern: /paradox\.ai/i,           name: "Paradox" },
   { pattern: /talentreef\.com/i,       name: "TalentReef" },
-  { pattern: /kronos\.com|dimensions\.kronos/i, name: "UKG Kronos" },
-  { pattern: /hire\.com|kenexa\.com/i, name: "IBM Kenexa" },
-  { pattern: /recruitingsite\.com|jobaps\.com/i, name: "JobAps" },
+  { pattern: /kronos\.com/i,           name: "UKG Kronos" },
+  { pattern: /kenexa\.com/i,           name: "IBM Kenexa" },
   { pattern: /silkroad\.com/i,         name: "SilkRoad" },
-  { pattern: /cornerstone|csod\.com/i, name: "Cornerstone" },
-  { pattern: /successfactors\.eu/i,    name: "SAP SuccessFactors" },
-  { pattern: /careers\.([a-z]+\.)?oracle\.com/i, name: "Oracle Recruiting" },
+  { pattern: /csod\.com|cornerstoneondemand\.com/i, name: "Cornerstone" },
+  { pattern: /workstream\.us/i,        name: "Workstream" },
+  { pattern: /dayforce\.com|ceridian\.com/i, name: "Dayforce" },
+  { pattern: /personio\.com|personio\.de/i, name: "Personio" },
+  { pattern: /bullhorn\.com/i,         name: "Bullhorn" },
+  { pattern: /teamtailor\.com/i,       name: "Teamtailor" },
+  { pattern: /recruitcrm\.io/i,        name: "RecruitCRM" },
+  { pattern: /zohorecruit\.com|recruit\.zoho\.com/i, name: "Zoho Recruit" },
+  { pattern: /hibob\.com/i,            name: "Bob (HiBob)" },
+  { pattern: /fountain\.com/i,         name: "Fountain" },
 ];
 
 const CAREER_PATHS = [
@@ -49,8 +55,60 @@ const CAREER_PATHS = [
 
 const CAREER_SUBDOMAINS = ["careers", "jobs", "work", "hire", "talent", "apply"];
 
-// Monthly browser session cap — adjust to control spend
 const MONTHLY_SESSION_CAP = 500;
+
+// Derive candidate slugs from a domain — tries the primary name + dehyphenated variant
+function domainToSlugs(domain) {
+  const clean = domain.replace(/^www\./, '');
+  // Strip TLD(s): handle .co.uk, .com.au, etc.
+  const parts = clean.split('.');
+  const slug = parts[0].toLowerCase();
+  const slugNoDash = slug.replace(/-/g, '');
+  return slug === slugNoDash ? [slug] : [slug, slugNoDash];
+}
+
+// Vendor index probes — these vendors expose public customer pages at predictable URLs.
+// A 200 response (with final URL still on the vendor domain) confirms the company is a customer.
+function buildVendorProbes(slugs) {
+  const probes = [];
+  for (const slug of slugs) {
+    probes.push(
+      { url: `https://boards.greenhouse.io/${slug}`,         name: "Greenhouse",        mustContain: "boards.greenhouse.io" },
+      { url: `https://jobs.lever.co/${slug}`,                name: "Lever",             mustContain: "jobs.lever.co" },
+      { url: `https://jobs.ashbyhq.com/${slug}`,             name: "Ashby",             mustContain: "jobs.ashbyhq.com" },
+      { url: `https://apply.workable.com/${slug}`,           name: "Workable",          mustContain: "apply.workable.com" },
+      { url: `https://careers.smartrecruiters.com/${slug}`,  name: "SmartRecruiters",   mustContain: "smartrecruiters.com" },
+      { url: `https://${slug}.bamboohr.com/jobs/`,           name: "BambooHR",          mustContain: `${slug}.bamboohr.com` },
+      { url: `https://${slug}.recruitee.com`,                name: "Recruitee",         mustContain: `${slug}.recruitee.com` },
+      { url: `https://${slug}.breezy.hr`,                    name: "Breezy HR",         mustContain: `${slug}.breezy.hr` },
+      { url: `https://jobs.jobvite.com/${slug}`,             name: "Jobvite",           mustContain: "jobvite.com" },
+      { url: `https://${slug}.teamtailor.com/jobs`,          name: "Teamtailor",        mustContain: `${slug}.teamtailor.com` },
+      // Workday instances — companies are assigned one of these numbered shards
+      ...["wd1","wd3","wd5","wd12","wd102"].map(shard => ({
+        url: `https://${slug}.${shard}.myworkdayjobs.com/careers`,
+        name: "Workday",
+        mustContain: "myworkdayjobs.com",
+      })),
+    );
+  }
+  return probes;
+}
+
+async function probeVendor({ url, name, mustContain }) {
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; ATSDetector/1.0; +https://ats.burkeruder.ai)" },
+      redirect: "follow",
+      cf: { timeout: 8000 },
+    });
+    if (!res.ok) return null;
+    // Guard against redirects to vendor homepage (false positive)
+    if (!res.url.includes(mustContain)) return null;
+    return { name, url: res.url };
+  } catch {
+    return null;
+  }
+}
 
 function detectATS(html, url) {
   const results = new Map();
@@ -105,7 +163,6 @@ async function fetchWithBrowser(url, browser) {
   }
 }
 
-// Returns current month key e.g. "browser_sessions:2026-07"
 function monthKey() {
   const d = new Date();
   return `browser_sessions:${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
@@ -113,15 +170,9 @@ function monthKey() {
 
 async function checkAndIncrementUsage(env) {
   if (!env.USAGE) return { allowed: true, count: 0, cap: MONTHLY_SESSION_CAP };
-
   const key = monthKey();
   const current = parseInt((await env.USAGE.get(key)) || "0", 10);
-
-  if (current >= MONTHLY_SESSION_CAP) {
-    return { allowed: false, count: current, cap: MONTHLY_SESSION_CAP };
-  }
-
-  // Increment — expires after 35 days so it auto-cleans
+  if (current >= MONTHLY_SESSION_CAP) return { allowed: false, count: current, cap: MONTHLY_SESSION_CAP };
   await env.USAGE.put(key, String(current + 1), { expirationTtl: 60 * 60 * 24 * 35 });
   return { allowed: true, count: current + 1, cap: MONTHLY_SESSION_CAP };
 }
@@ -136,18 +187,14 @@ export async function onRequestGet(context) {
 
   const base = `https://${domain}`;
   const subdomainBases = CAREER_SUBDOMAINS.map(s => `https://${s}.${domain}`);
-  const urlsToCheck = [
-    base,
-    ...subdomainBases,
-    ...CAREER_PATHS.map(p => base + p),
-  ];
+  const urlsToCheck = [base, ...subdomainBases, ...CAREER_PATHS.map(p => base + p)];
 
   const checkedUrls = [];
   const allMatches = new Map();
   let usedBrowser = false;
   let browserLimitReached = false;
 
-  // ── PASS 1: fast fetch ──
+  // ── PASS 1: fast fetch (domain + subdomains + career paths) ──
   for (const url of urlsToCheck) {
     try {
       const result = await fetchPage(url);
@@ -161,7 +208,24 @@ export async function onRequestGet(context) {
     } catch { /* skip */ }
   }
 
-  // ── PASS 2: headless browser fallback (only if pass 1 found nothing) ──
+  // ── PASS 2: vendor index probes (free, parallel — no browser needed) ──
+  // Greenhouse, Lever, Ashby, Workday etc. expose public customer pages at known URLs.
+  // Run all probes simultaneously; first hit wins.
+  if (allMatches.size === 0) {
+    const slugs = domainToSlugs(domain);
+    const probes = buildVendorProbes(slugs);
+    checkedUrls.push(`[vendor index probes: ${slugs.join(', ')}]`);
+
+    const results = await Promise.allSettled(probes.map(probeVendor));
+    for (const r of results) {
+      if (r.status === "fulfilled" && r.value) {
+        const { name, url } = r.value;
+        if (!allMatches.has(name)) allMatches.set(name, url);
+      }
+    }
+  }
+
+  // ── PASS 3: headless browser fallback (costs a session — last resort) ──
   if (allMatches.size === 0 && context.env.BROWSER) {
     const usage = await checkAndIncrementUsage(context.env);
 
@@ -173,7 +237,6 @@ export async function onRequestGet(context) {
         browser = await puppeteer.launch(context.env.BROWSER);
         usedBrowser = true;
 
-        // Try subdomains first (most large enterprises use these), then paths
         const browserTargets = [
           ...CAREER_SUBDOMAINS.map(s => `https://${s}.${domain}`),
           base + "/careers",
