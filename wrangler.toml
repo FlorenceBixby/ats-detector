@@ -1,0 +1,10 @@
+name = "ats-detector"
+pages_build_output_dir = "public"
+compatibility_date = "2026-06-28"
+
+[browser]
+binding = "BROWSER"
+
+[[kv_namespaces]]
+binding = "USAGE"
+id = "5537568ec0f049c8a0e2683e8285a9e1"
