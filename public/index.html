@@ -29,38 +29,48 @@
       color: var(--fg);
     }
 
-    /* ── SHIP SCENE ── */
-    .ship-scene {
-      position: fixed; inset: 0; z-index: 0; overflow: hidden;
+    /* ── BACKGROUND ── */
+    .bg {
+      position: fixed; inset: 0; z-index: 0;
       background: linear-gradient(to bottom,
-        #020508 0%, #040a14 25%, #080d18 55%, #091220 100%);
+        #030610 0%, #060c18 30%, #080d18 60%, #0a1220 100%);
     }
 
-    #ship-svg {
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 100%; height: 100%;
+    /* ── AURORA GLOW (same as burkeruder.ai hero) ── */
+    .aurora {
+      position: fixed; top: 5%; left: 10%; width: 80%; height: 50%;
+      background: radial-gradient(ellipse at 50% 40%,
+        rgba(78,205,196,0.08) 0%, rgba(30,100,120,0.05) 50%, transparent 70%);
+      animation: auroraPulse 12s ease-in-out infinite alternate;
+      pointer-events: none; z-index: 1;
+    }
+    @keyframes auroraPulse {
+      0%   { opacity:.3;  transform: scaleX(.85) scaleY(.9); }
+      50%  { opacity:.75; transform: scaleX(1.08) scaleY(1.1); }
+      100% { opacity:.25; transform: scaleX(.95) scaleY(.85); }
     }
 
-    .win-flicker {
-      animation: winFlicker ease-in-out infinite alternate;
+    /* ── FLOATING OCEAN ICONS ── */
+    .ocean-icons {
+      position: fixed; inset: 0; pointer-events: none; z-index: 2; overflow: hidden;
     }
-    @keyframes winFlicker {
-      0%, 80%  { opacity: 1; }
-      85%      { opacity: 0.35; }
-      90%      { opacity: 0.85; }
-      95%      { opacity: 0.2; }
-      100%     { opacity: 1; }
+    .ocean-icons span {
+      position: absolute; user-select: none; opacity: 0.13;
+      animation: iconDrift ease-in-out infinite alternate;
+    }
+    @keyframes iconDrift {
+      0%   { transform: translateY(0px)   rotate(-2deg); }
+      100% { transform: translateY(-18px) rotate(3deg); }
     }
 
     /* ── FILM GRAIN ── */
     #grain-canvas {
-      position: fixed; inset: 0; pointer-events: none; z-index: 2;
-      opacity: 0.045; mix-blend-mode: screen;
+      position: fixed; inset: 0; pointer-events: none; z-index: 3;
+      opacity: 0.04; mix-blend-mode: screen;
     }
 
     /* ── BUBBLES ── */
-    #bubble-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
+    #bubble-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
 
     /* ── MARQUEE ── */
     .marquee-wrap {
@@ -74,7 +84,7 @@
     }
     .marquee-track {
       display: flex; gap: 0;
-      animation: marquee 34s linear infinite; width: max-content;
+      animation: marquee 32s linear infinite; width: max-content;
     }
     .marquee-track span {
       font-size: .62rem; letter-spacing: .25em; text-transform: uppercase;
@@ -156,8 +166,7 @@
     button:disabled { opacity: .4; cursor: not-allowed; }
 
     .spinner {
-      display: none; margin: 1.25rem auto 0;
-      width: 18px; height: 18px;
+      display: none; margin: 1.25rem auto 0; width: 18px; height: 18px;
       border: 1.5px solid var(--border-solid); border-top-color: var(--seafoam);
       border-radius: 50%; animation: spin .8s linear infinite;
     }
@@ -200,120 +209,26 @@
 </head>
 <body>
 
-<!-- ── SHIP SCENE ── -->
-<div class="ship-scene">
-  <svg id="ship-svg" viewBox="0 0 1440 700"
-       xmlns="http://www.w3.org/2000/svg"
-       preserveAspectRatio="xMidYMax slice">
-    <defs>
-      <linearGradient id="hullGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#182438"/>
-        <stop offset="100%" stop-color="#0e1824"/>
-      </linearGradient>
-      <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#091522" stop-opacity="0.95"/>
-        <stop offset="100%" stop-color="#030810"/>
-      </linearGradient>
-      <filter id="winGlow">
-        <feGaussianBlur stdDeviation="3" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-    </defs>
+<div class="bg"></div>
+<div class="aurora"></div>
 
-    <!-- Stars -->
-    <g id="svg-stars"></g>
-
-    <!-- Ocean -->
-    <rect x="0" y="468" width="1440" height="232" fill="url(#seaGrad)"/>
-
-    <!-- ── MAIN HULL ── -->
-    <!-- Flat stern on left, tapered bow on right -->
-    <path d="M 92,278 L 1268,278 Q 1368,280 1378,360 L 1378,468 L 1365,548 L 92,548 Z"
-          fill="url(#hullGrad)" stroke="#243650" stroke-width="2.5"/>
-
-    <!-- Below-waterline overlay (darker, teal-tinted) -->
-    <path d="M 92,468 L 1378,468 L 1365,548 L 92,548 Z"
-          fill="#060d18" opacity="0.65"/>
-
-    <!-- Waterline boot stripe -->
-    <rect x="92" y="464" width="1283" height="5" fill="#4ecdc4" opacity="0.12"/>
-    <line x1="92" y1="470" x2="1378" y2="470" stroke="#4ecdc4" stroke-width="1.5" opacity="0.18"/>
-
-    <!-- ── DECK SEPARATOR LINES ── -->
-    <!-- Between Deck A and B -->
-    <line x1="92"  y1="343" x2="1332" y2="343" stroke="#3a5878" stroke-width="2"/>
-    <!-- Between Deck B and C -->
-    <line x1="92"  y1="408" x2="1352" y2="408" stroke="#3a5878" stroke-width="2"/>
-
-    <!-- ── SUPERSTRUCTURE ── -->
-    <rect x="148" y="226" width="692" height="52"
-          fill="#182438" stroke="#243650" stroke-width="1.5"/>
-
-    <!-- ── BRIDGE ── -->
-    <rect x="200" y="186" width="362" height="40"
-          fill="#182438" stroke="#243650" stroke-width="1.5"/>
-    <!-- Bridge panoramic window strip -->
-    <rect x="213" y="194" width="334" height="22" rx="2"
-          fill="#4ecdc4" opacity="0.06"/>
-    <rect x="213" y="194" width="334" height="22" rx="2"
-          fill="none" stroke="#4ecdc4" stroke-width="1" opacity="0.22"/>
-
-    <!-- ── MAST ── -->
-    <line x1="340" y1="78"  x2="340" y2="186" stroke="#b8924a" stroke-width="2.5" opacity="0.5"/>
-    <!-- Cross arm -->
-    <line x1="282" y1="108" x2="402" y2="108" stroke="#b8924a" stroke-width="1.5" opacity="0.38"/>
-    <!-- Guy wires -->
-    <line x1="340" y1="108" x2="202" y2="186" stroke="#b8924a" stroke-width="0.8" opacity="0.18"/>
-    <line x1="340" y1="108" x2="490" y2="186" stroke="#b8924a" stroke-width="0.8" opacity="0.18"/>
-    <!-- Radar dish -->
-    <ellipse cx="340" cy="80" rx="21" ry="9"
-             fill="none" stroke="#4ecdc4" stroke-width="1.5" opacity="0.42"/>
-    <line x1="340" y1="71" x2="340" y2="89" stroke="#4ecdc4" stroke-width="1" opacity="0.28"/>
-    <!-- Antenna tip -->
-    <line x1="340" y1="58" x2="340" y2="78" stroke="#b8924a" stroke-width="1" opacity="0.5"/>
-
-    <!-- ── FLAG ── -->
-    <polygon points="340,44 378,53 340,62" fill="#e63946" opacity="0.72"/>
-
-    <!-- ── FUNNEL / SMOKESTACK ── -->
-    <rect x="268" y="156" width="50" height="70" rx="4"
-          fill="#182438" stroke="#243650" stroke-width="1.5"/>
-    <rect x="260" y="150" width="66" height="14" rx="3"
-          fill="#1a2d3f" stroke="#243650" stroke-width="1"/>
-    <!-- Exhaust smoke -->
-    <circle cx="288" cy="135" r="10" fill="#243650" opacity="0.20"/>
-    <circle cx="297" cy="118" r="7"  fill="#243650" opacity="0.14"/>
-    <circle cx="282" cy="104" r="5"  fill="#243650" opacity="0.09"/>
-
-    <!-- ── HELIPAD (top-right of main deck) ── -->
-    <rect x="945"  y="276" width="268" height="3" fill="#4ecdc4" opacity="0.18"/>
-    <circle cx="1079" cy="256" r="33"
-            fill="none" stroke="#4ecdc4" stroke-width="1" opacity="0.14"/>
-    <text x="1079" y="261" text-anchor="middle"
-          font-family="Georgia,serif" font-size="20"
-          fill="#4ecdc4" opacity="0.16">H</text>
-    <!-- Helipad crosshairs -->
-    <line x1="1046" y1="256" x2="1112" y2="256" stroke="#4ecdc4" stroke-width="0.8" opacity="0.10"/>
-    <line x1="1079" y1="223" x2="1079" y2="289" stroke="#4ecdc4" stroke-width="0.8" opacity="0.10"/>
-
-    <!-- ── ANCHOR CHAIN (bow) ── -->
-    <circle cx="1280" cy="378" r="20" fill="none" stroke="#243650" stroke-width="2" opacity="0.7"/>
-    <circle cx="1280" cy="378" r="13" fill="#0c1624" opacity="0.9"/>
-
-    <!-- ── SHIP NAME ON HULL ── -->
-    <text x="600" y="515" text-anchor="middle"
-          font-family="Georgia,serif" font-style="italic" font-size="26"
-          fill="#4ecdc4" opacity="0.38" letter-spacing="10">BELAFONTE</text>
-
-    <!-- Room grids (JS-generated) -->
-    <g id="rooms"></g>
-  </svg>
+<!-- Floating ocean icons — same as burkeruder.ai -->
+<div class="ocean-icons">
+  <span style="left:7%;  top:18%; font-size:2.2rem; animation-duration:7.2s; animation-delay:0s;">🐠</span>
+  <span style="left:88%; top:14%; font-size:1.5rem; animation-duration:9.8s; animation-delay:1.2s;">🔱</span>
+  <span style="left:4%;  top:58%; font-size:1.9rem; animation-duration:8.1s; animation-delay:0.4s;">⚓</span>
+  <span style="left:93%; top:52%; font-size:1.7rem; animation-duration:11s;  animation-delay:2.1s;">🐡</span>
+  <span style="left:85%; top:76%; font-size:1.6rem; animation-duration:6.7s; animation-delay:0.8s;">🔭</span>
+  <span style="left:10%; top:78%; font-size:1.9rem; animation-duration:9.2s; animation-delay:1.6s;">🦈</span>
+  <span style="left:50%; top:7%;  font-size:1.3rem; animation-duration:8.8s; animation-delay:0.2s;">⭐</span>
+  <span style="left:28%; top:90%; font-size:1.5rem; animation-duration:7.5s; animation-delay:1.0s;">🌊</span>
+  <span style="left:68%; top:88%; font-size:1.4rem; animation-duration:10s;  animation-delay:2.8s;">🐙</span>
+  <span style="left:73%; top:22%; font-size:1.2rem; animation-duration:8.4s; animation-delay:3.2s;">🐟</span>
+  <span style="left:18%; top:35%; font-size:1.1rem; animation-duration:12s;  animation-delay:0.6s;">🦑</span>
+  <span style="left:42%; top:82%; font-size:1.3rem; animation-duration:9.5s; animation-delay:1.8s;">🐚</span>
 </div>
 
-<!-- Film grain -->
 <canvas id="grain-canvas"></canvas>
-
-<!-- Bubbles -->
 <canvas id="bubble-canvas"></canvas>
 
 <!-- ── MARQUEE ── -->
@@ -360,134 +275,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-// ── CARD ENTRANCE ──
 gsap.to('#card', { opacity:1, scale:1, y:0, duration:1.4, ease:'back.out(1.5)', delay:.3 });
-
-// ── SHIP: STARS ──
-(function buildStars() {
-  const ns = 'http://www.w3.org/2000/svg';
-  const g  = document.getElementById('svg-stars');
-  for (let i = 0; i < 140; i++) {
-    const c = document.createElementNS(ns, 'circle');
-    c.setAttribute('cx', (Math.random() * 1440).toFixed(1));
-    c.setAttribute('cy', (Math.random() * 430).toFixed(1));
-    c.setAttribute('r',  (0.3 + Math.random() * 1.4).toFixed(2));
-    c.setAttribute('fill', `rgba(195,215,228,${(0.25 + Math.random() * 0.75).toFixed(2)})`);
-    g.appendChild(c);
-  }
-})();
-
-// ── SHIP: ROOM GRIDS ──
-(function buildRooms() {
-  const ns = 'http://www.w3.org/2000/svg';
-  const g  = document.getElementById('rooms');
-
-  const decks = [
-    {
-      y1: 278, y2: 343, x1: 92, x2: 1268,
-      labels: ['NAVIGATION','CAPTAIN\'S CABIN','FIRST MATE','OFFICERS MESS','CREW BERTH A','CREW BERTH B','CREW BERTH C','COMMUNICATIONS','COLD STORAGE','ARMORY'],
-      winRow: 0.28,
-    },
-    {
-      y1: 343, y2: 408, x1: 92, x2: 1295,
-      labels: ['ENGINE ROOM','','GENERATOR','ELECTRICAL','FUEL PUMPS','PROVISIONS','MEDICAL BAY','LAUNDRY','WET SUITS','DIVE TANKS'],
-      winRow: 0.28,
-    },
-    {
-      y1: 408, y2: 468, x1: 92, x2: 1320,
-      labels: ['BALLAST A','BALLAST B','FUEL TANK','FUEL TANK','BILGE','BILGE','BILGE','BILGE','KEEL FWD','KEEL AFT'],
-      winRow: null, // below waterline, round portholes instead
-    },
-    {
-      y1: 226, y2: 278, x1: 148, x2: 840,
-      labels: ['DIVE PREP','SPECIMEN TANKS','PHOTO LAB','RESEARCH LAB','RADIO ROOM','OFFICERS\' MESS'],
-      winRow: 0.22,
-    },
-  ];
-
-  decks.forEach(deck => {
-    const n      = deck.labels.length;
-    const roomW  = (deck.x2 - deck.x1) / n;
-    const deckH  = deck.y2 - deck.y1;
-    const isKeel = deck.winRow === null;
-
-    for (let i = 0; i < n; i++) {
-      const rx = deck.x1 + i * roomW;
-
-      // Room divider
-      if (i > 0) {
-        const ln = document.createElementNS(ns, 'line');
-        ln.setAttribute('x1', rx.toFixed(1)); ln.setAttribute('y1', deck.y1);
-        ln.setAttribute('x2', rx.toFixed(1)); ln.setAttribute('y2', deck.y2);
-        ln.setAttribute('stroke', '#2e4a65'); ln.setAttribute('stroke-width', '1.5');
-        g.appendChild(ln);
-      }
-
-      // Windows
-      if (!isKeel) {
-        const winH = Math.min(20, deckH * 0.32);
-        const winW = Math.min(28, roomW * 0.30);
-        const winY = deck.y1 + deckH * deck.winRow;
-
-        for (let w = 0; w < 2; w++) {
-          const winX = rx + roomW * (w === 0 ? 0.16 : 0.56);
-          const lit  = Math.random() > 0.22;
-
-          if (lit) {
-            // Soft glow behind window
-            const gl = document.createElementNS(ns, 'rect');
-            gl.setAttribute('x',      (winX - 4).toFixed(1));
-            gl.setAttribute('y',      (winY - 4).toFixed(1));
-            gl.setAttribute('width',  (winW + 8).toFixed(1));
-            gl.setAttribute('height', (winH + 8).toFixed(1));
-            gl.setAttribute('rx', '3');
-            gl.setAttribute('fill', '#f2dc6a');
-            gl.setAttribute('opacity', '0.14');
-            g.appendChild(gl);
-          }
-
-          const rect = document.createElementNS(ns, 'rect');
-          rect.setAttribute('x',      winX.toFixed(1));
-          rect.setAttribute('y',      winY.toFixed(1));
-          rect.setAttribute('width',  winW.toFixed(1));
-          rect.setAttribute('height', winH.toFixed(1));
-          rect.setAttribute('rx', '2');
-          rect.setAttribute('fill', lit ? '#f2dc6a' : '#07101c');
-          if (lit && Math.random() > 0.6) {
-            rect.classList.add('win-flicker');
-            rect.style.animationDuration  = (2.5 + Math.random() * 7) + 's';
-            rect.style.animationDelay     = (Math.random() * 5) + 's';
-          }
-          g.appendChild(rect);
-        }
-      } else {
-        // Keel deck: small round portholes
-        const ph = document.createElementNS(ns, 'circle');
-        ph.setAttribute('cx', (rx + roomW * 0.5).toFixed(1));
-        ph.setAttribute('cy', (deck.y1 + deckH * 0.4).toFixed(1));
-        ph.setAttribute('r',  '7');
-        ph.setAttribute('fill', '#07101c');
-        ph.setAttribute('stroke', '#243650'); ph.setAttribute('stroke-width', '1');
-        g.appendChild(ph);
-      }
-
-      // Department label
-      if (deck.labels[i]) {
-        const lbl = document.createElementNS(ns, 'text');
-        lbl.setAttribute('x', (rx + roomW / 2).toFixed(1));
-        lbl.setAttribute('y', (deck.y2 - deckH * 0.12).toFixed(1));
-        lbl.setAttribute('text-anchor', 'middle');
-        lbl.setAttribute('font-family', 'Georgia,serif');
-        lbl.setAttribute('font-style', 'italic');
-        lbl.setAttribute('font-size', '11');
-        lbl.setAttribute('fill', '#4ecdc4');
-        lbl.setAttribute('opacity', '0.65');
-        lbl.textContent = deck.labels[i];
-        g.appendChild(lbl);
-      }
-    }
-  });
-})();
 
 // ── FILM GRAIN ──
 const grainCanvas = document.getElementById('grain-canvas');
@@ -501,7 +289,7 @@ function renderGrain() {
     const img = gCtx.createImageData(w, h); const d = img.data;
     for (let i = 0; i < d.length; i += 4) {
       const v = Math.random() * 255 | 0;
-      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 16;
+      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 14;
     }
     gCtx.putImageData(img, 0, 0);
   }
