@@ -96,72 +96,72 @@
     .ui-wrapper {
       position: fixed; inset: 0; display: flex;
       align-items: center; justify-content: center;
-      z-index: 10; padding: 2.5rem 1.5rem 1.5rem; overflow-y: auto;
+      z-index: 10; padding: 3rem 2rem 2rem; overflow-y: auto;
     }
 
     .card {
-      width: 100%; max-width: 500px;
+      width: 100%; max-width: 680px;
       background: var(--card-bg);
       border: 2px solid var(--border-solid);
-      padding: 2.5rem 2.75rem;
+      padding: 3.5rem 4rem;
       position: relative; text-align: center;
       opacity: 0; transform: scale(.78) translateY(40px);
-      box-shadow: 10px 10px 0 rgba(78,205,196,.15);
+      box-shadow: 14px 14px 0 rgba(78,205,196,.12);
     }
     .card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
-      height: 3px; background: var(--red-zissou);
+      height: 4px; background: var(--red-zissou);
     }
     .card::after {
-      content: ''; position: absolute; inset: 10px;
+      content: ''; position: absolute; inset: 12px;
       border: 1px solid var(--border); pointer-events: none; opacity: .5;
     }
 
     .chapter-label {
       display: inline-block;
-      font-family: Georgia, serif; font-style: italic; font-size: .78rem;
-      color: var(--seafoam); letter-spacing: .08em; margin-bottom: 1rem;
+      font-family: Georgia, serif; font-style: italic; font-size: 1rem;
+      color: var(--seafoam); letter-spacing: .1em; margin-bottom: 1.1rem;
     }
 
     h1 {
       font-family: Georgia, serif; font-style: italic;
-      font-size: 1.9rem; font-weight: 400;
-      color: var(--ivory); line-height: 1.2; margin-bottom: .4rem;
+      font-size: 3rem; font-weight: 400;
+      color: var(--ivory); line-height: 1.15; margin-bottom: .5rem;
     }
 
     .subtitle {
-      font-size: .78rem; color: var(--muted);
-      letter-spacing: .06em; margin-bottom: 1.75rem;
+      font-size: .95rem; color: var(--muted);
+      letter-spacing: .04em; margin-bottom: 2rem;
     }
 
-    .divider { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.75rem; }
+    .divider { display: flex; align-items: center; gap: .75rem; margin-bottom: 2rem; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-solid); }
-    .divider-diamond { width: 5px; height: 5px; background: var(--seafoam); transform: rotate(45deg); }
+    .divider-diamond { width: 7px; height: 7px; background: var(--seafoam); transform: rotate(45deg); }
 
     .input-label {
-      display: block; font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: .5rem; text-align: left;
+      display: block; font-size: .7rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: .6rem; text-align: left;
     }
 
     input {
       width: 100%; background: #0c1220;
       border: 2px solid var(--border-solid); color: var(--fg);
-      font-family: Georgia, serif; font-style: italic; font-size: 1rem;
-      padding: .65rem 1rem; outline: none; text-align: center;
-      letter-spacing: .03em; margin-bottom: 1rem;
+      font-family: Georgia, serif; font-style: italic; font-size: 1.25rem;
+      padding: .9rem 1.25rem; outline: none; text-align: center;
+      letter-spacing: .03em; margin-bottom: 1.25rem;
       transition: border-color .2s, box-shadow .2s;
     }
-    input:focus { border-color: var(--seafoam); box-shadow: 0 0 0 3px rgba(78,205,196,.1); }
+    input:focus { border-color: var(--seafoam); box-shadow: 0 0 0 4px rgba(78,205,196,.1); }
     input::placeholder { color: var(--muted); font-style: italic; }
 
     button {
       width: 100%; background: transparent;
       color: var(--seafoam); border: 2px solid var(--seafoam);
-      cursor: pointer; font-size: .65rem; font-weight: 700;
-      letter-spacing: .25em; text-transform: uppercase; padding: .72rem 2rem;
+      cursor: pointer; font-size: .8rem; font-weight: 700;
+      letter-spacing: .3em; text-transform: uppercase; padding: 1rem 2rem;
       transition: background .2s, color .2s, letter-spacing .3s, transform .1s;
     }
-    button:hover { background: var(--seafoam); color: var(--ocean-deep); letter-spacing: .32em; }
+    button:hover { background: var(--seafoam); color: var(--ocean-deep); letter-spacing: .38em; }
     button:active { transform: scale(.98); }
     button:disabled { opacity: .4; cursor: not-allowed; }
 
