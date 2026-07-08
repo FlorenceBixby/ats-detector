@@ -27,6 +27,17 @@ const ATS_PATTERNS = [
   { pattern: /comeet\.co/i,            name: "Comeet" },
   { pattern: /dover\.com/i,            name: "Dover" },
   { pattern: /gusto\.com/i,            name: "Gusto" },
+  { pattern: /phenom\.com|phenompeople\.com/i, name: "Phenom" },
+  { pattern: /eightfold\.ai/i,         name: "Eightfold" },
+  { pattern: /paradox\.ai|olivia\.paradox/i,   name: "Paradox" },
+  { pattern: /talentreef\.com/i,       name: "TalentReef" },
+  { pattern: /kronos\.com|dimensions\.kronos/i, name: "UKG Kronos" },
+  { pattern: /hire\.com|kenexa\.com/i, name: "IBM Kenexa" },
+  { pattern: /recruitingsite\.com|jobaps\.com/i, name: "JobAps" },
+  { pattern: /silkroad\.com/i,         name: "SilkRoad" },
+  { pattern: /cornerstone|csod\.com/i, name: "Cornerstone" },
+  { pattern: /successfactors\.eu/i,    name: "SAP SuccessFactors" },
+  { pattern: /careers\.([a-z]+\.)?oracle\.com/i, name: "Oracle Recruiting" },
 ];
 
 const CAREER_PATHS = [
@@ -35,6 +46,8 @@ const CAREER_PATHS = [
   "/join-us", "/join-our-team", "/hiring", "/positions",
   "/open-positions", "/opportunities",
 ];
+
+const CAREER_SUBDOMAINS = ["careers", "jobs", "work", "hire", "talent", "apply"];
 
 // Monthly browser session cap — adjust to control spend
 const MONTHLY_SESSION_CAP = 500;
@@ -122,7 +135,12 @@ export async function onRequestGet(context) {
   }
 
   const base = `https://${domain}`;
-  const urlsToCheck = [base, ...CAREER_PATHS.map(p => base + p)];
+  const subdomainBases = CAREER_SUBDOMAINS.map(s => `https://${s}.${domain}`);
+  const urlsToCheck = [
+    base,
+    ...subdomainBases,
+    ...CAREER_PATHS.map(p => base + p),
+  ];
 
   const checkedUrls = [];
   const allMatches = new Map();
@@ -139,7 +157,7 @@ export async function onRequestGet(context) {
       for (const m of matches) {
         if (!allMatches.has(m.name)) allMatches.set(m.name, m.url);
       }
-      if (matches.length > 0 && url !== base) break;
+      if (matches.length > 0) break;
     } catch { /* skip */ }
   }
 
@@ -155,8 +173,9 @@ export async function onRequestGet(context) {
         browser = await puppeteer.launch(context.env.BROWSER);
         usedBrowser = true;
 
-        // Try the most likely career URLs with the browser
+        // Try subdomains first (most large enterprises use these), then paths
         const browserTargets = [
+          ...CAREER_SUBDOMAINS.map(s => `https://${s}.${domain}`),
           base + "/careers",
           base + "/jobs",
           base + "/about/careers",
