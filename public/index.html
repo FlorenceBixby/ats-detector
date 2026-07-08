@@ -191,20 +191,20 @@
 
     /* ── USAGE BAR ── */
     .usage-bar {
-      width: 100%; max-width: 500px; margin-top: 12px;
+      width: 100%; max-width: 680px; margin-top: 12px;
       display: grid; grid-template-columns: repeat(3, 1fr);
       border: 1px solid var(--border-solid);
       background: rgba(11,18,32,0.85); backdrop-filter: blur(8px);
       opacity: 0;
     }
-    .usage-stat { padding: 14px 12px; text-align: center; border-right: 1px solid var(--border-solid); position: relative; }
+    .usage-stat { padding: 18px 16px; text-align: center; border-right: 1px solid var(--border-solid); position: relative; }
     .usage-stat:last-child { border-right: none; }
-    .usage-number { font-family: Georgia, serif; font-style: italic; font-size: 1.5rem; font-weight: 400; color: var(--seafoam); display: block; margin-bottom: 4px; }
+    .usage-number { font-family: Georgia, serif; font-style: italic; font-size: 1.9rem; font-weight: 400; color: var(--seafoam); display: block; margin-bottom: 6px; }
     .usage-number.danger { color: var(--red-zissou); }
-    .usage-label { font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); display: block; }
+    .usage-label { font-size: .65rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); display: block; }
     .usage-bar-fill { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--seafoam); width: 0%; transition: width 1.2s cubic-bezier(.22,1,.36,1); }
     .usage-bar-fill.danger { background: var(--red-zissou); }
-    .usage-note { width: 100%; max-width: 500px; text-align: center; font-size: .6rem; letter-spacing: .12em; color: var(--muted); margin-top: 8px; font-family: Georgia, serif; font-style: italic; opacity: 0; }
+    .usage-note { width: 100%; max-width: 680px; text-align: center; font-size: .85rem; letter-spacing: .08em; color: var(--muted); margin-top: 10px; font-family: Georgia, serif; font-style: italic; opacity: 0; }
   </style>
 </head>
 <body>
