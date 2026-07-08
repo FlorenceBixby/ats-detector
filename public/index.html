@@ -8,18 +8,18 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ocean-deep: #080d18;
-      --bg:         #0c1220;
-      --fg:         #e8e4d9;
-      --accent:     #4ecdc4;
-      --seafoam:    #4ecdc4;
-      --red-zissou: #e63946;
-      --sand:       #b8924a;
-      --card-bg:    #111827;
-      --border:     rgba(78,205,196,0.22);
+      --ocean-deep:   #080d18;
+      --bg:           #0c1220;
+      --fg:           #e8e4d9;
+      --accent:       #4ecdc4;
+      --seafoam:      #4ecdc4;
+      --red-zissou:   #e63946;
+      --sand:         #b8924a;
+      --card-bg:      #111827;
+      --border:       rgba(78,205,196,0.22);
       --border-solid: #1e2d3d;
-      --muted:      #6b7a8d;
-      --ivory:      #f0ede6;
+      --muted:        #6b7a8d;
+      --ivory:        #f0ede6;
     }
 
     html, body { width: 100%; height: 100%; overflow: hidden; }
@@ -29,81 +29,44 @@
       color: var(--fg);
     }
 
-    /* ── CINEMATIC BACKGROUND ── */
-    .cinematic-bg { position: fixed; inset: 0; overflow: hidden; z-index: 0; }
+    /* ── SHIP SCENE ── */
+    .ship-scene {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: linear-gradient(to bottom,
+        #020508 0%, #040a14 25%, #080d18 55%, #091220 100%);
+    }
 
-    .bg-photo {
+    #ship-svg {
       position: absolute;
-      inset: -8%;
-      background-image: url('https://images.unsplash.com/photo-1704035782489-cd832ece261c?auto=format&fit=crop&w=1920&q=85');
-      background-size: cover;
-      background-position: center 60%;
-      animation: kenBurns 50s ease-in-out infinite alternate;
-      filter: saturate(0.75) brightness(0.38) hue-rotate(175deg);
-    }
-    @keyframes kenBurns {
-      from { transform: scale(1)   translate(0,    0); }
-      to   { transform: scale(1.1) translate(-1.5%, 1%); }
+      bottom: 0; left: 0;
+      width: 100%; height: 100%;
     }
 
-    /* deep ocean teal grade */
-    .color-grade {
-      position: absolute; inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(8,13,24,0.55)  0%,
-        rgba(4,20,35,0.25)  40%,
-        rgba(6,14,26,0.65) 100%
-      );
+    .win-flicker {
+      animation: winFlicker ease-in-out infinite alternate;
     }
-
-    .vignette {
-      position: absolute; inset: 0;
-      background: radial-gradient(
-        ellipse at 50% 45%,
-        transparent 18%,
-        rgba(4,8,18,0.55) 58%,
-        rgba(4,8,18,0.92) 100%
-      );
+    @keyframes winFlicker {
+      0%, 80%  { opacity: 1; }
+      85%      { opacity: 0.35; }
+      90%      { opacity: 0.85; }
+      95%      { opacity: 0.2; }
+      100%     { opacity: 1; }
     }
-
-    /* letterbox */
-    .letterbox-top, .letterbox-bottom {
-      position: absolute; left: 0; right: 0; background: #000; z-index: 1;
-    }
-    .letterbox-top    { top: 0;    height: 4vh; }
-    .letterbox-bottom { bottom: 0; height: 4vh; }
 
     /* ── FILM GRAIN ── */
     #grain-canvas {
       position: fixed; inset: 0; pointer-events: none; z-index: 2;
-      opacity: 0.05; mix-blend-mode: screen;
+      opacity: 0.045; mix-blend-mode: screen;
     }
 
     /* ── BUBBLES ── */
     #bubble-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
 
-    /* ── FLOATING OCEAN ICONS ── */
-    .ocean-floats {
-      position: fixed; inset: 0; pointer-events: none; z-index: 4; overflow: hidden;
-    }
-    .ocean-floats span {
-      position: absolute;
-      font-size: 1.4rem; opacity: 0.1; user-select: none;
-      animation: iconDrift linear infinite;
-    }
-    @keyframes iconDrift {
-      0%   { transform: translateY(0)    rotate(0deg); }
-      50%  { transform: translateY(-14px) rotate(4deg); }
-      100% { transform: translateY(0)    rotate(0deg); }
-    }
-
     /* ── MARQUEE ── */
     .marquee-wrap {
       position: fixed; top: 0; left: 0; right: 0; z-index: 11;
       border-bottom: 2px solid var(--border-solid);
-      background: var(--card-bg);
-      overflow: hidden; padding: 7px 0;
+      background: var(--card-bg); overflow: hidden; padding: 7px 0;
     }
     .marquee-wrap::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -111,8 +74,7 @@
     }
     .marquee-track {
       display: flex; gap: 0;
-      animation: marquee 32s linear infinite;
-      width: max-content;
+      animation: marquee 34s linear infinite; width: max-content;
     }
     .marquee-track span {
       font-size: .62rem; letter-spacing: .25em; text-transform: uppercase;
@@ -122,7 +84,8 @@
 
     /* ── UI CARD ── */
     .ui-wrapper {
-      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      position: fixed; inset: 0; display: flex;
+      align-items: center; justify-content: center;
       z-index: 10; padding: 2.5rem 1.5rem 1.5rem; overflow-y: auto;
     }
 
@@ -135,12 +98,10 @@
       opacity: 0; transform: scale(.78) translateY(40px);
       box-shadow: 10px 10px 0 rgba(78,205,196,.15);
     }
-    /* red top stripe — identical to burkeruder.ai */
     .card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
       height: 3px; background: var(--red-zissou);
     }
-    /* inner border detail */
     .card::after {
       content: ''; position: absolute; inset: 10px;
       border: 1px solid var(--border); pointer-events: none; opacity: .5;
@@ -163,9 +124,7 @@
       letter-spacing: .06em; margin-bottom: 1.75rem;
     }
 
-    .divider {
-      display: flex; align-items: center; gap: .75rem; margin-bottom: 1.75rem;
-    }
+    .divider { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.75rem; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-solid); }
     .divider-diamond { width: 5px; height: 5px; background: var(--seafoam); transform: rotate(45deg); }
 
@@ -175,10 +134,8 @@
     }
 
     input {
-      width: 100%;
-      background: #0c1220;
-      border: 2px solid var(--border-solid);
-      color: var(--fg);
+      width: 100%; background: #0c1220;
+      border: 2px solid var(--border-solid); color: var(--fg);
       font-family: Georgia, serif; font-style: italic; font-size: 1rem;
       padding: .65rem 1rem; outline: none; text-align: center;
       letter-spacing: .03em; margin-bottom: 1rem;
@@ -190,9 +147,8 @@
     button {
       width: 100%; background: transparent;
       color: var(--seafoam); border: 2px solid var(--seafoam);
-      cursor: pointer;
-      font-size: .65rem; font-weight: 700; letter-spacing: .25em; text-transform: uppercase;
-      padding: .72rem 2rem;
+      cursor: pointer; font-size: .65rem; font-weight: 700;
+      letter-spacing: .25em; text-transform: uppercase; padding: .72rem 2rem;
       transition: background .2s, color .2s, letter-spacing .3s, transform .1s;
     }
     button:hover { background: var(--seafoam); color: var(--ocean-deep); letter-spacing: .32em; }
@@ -210,73 +166,148 @@
 
     .result { display: none; margin-top: 1.5rem; text-align: center; }
     .result.visible { display: block; }
-
     .result-rule { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; }
     .result-rule::before, .result-rule::after { content: ''; flex: 1; height: 1px; background: var(--border-solid); }
     .result-rule span { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-
     .ats-name { font-family: Georgia, serif; font-style: italic; font-size: 1.7rem; font-weight: 400; color: var(--accent); margin-bottom: .3rem; }
     .ats-url { font-size: .72rem; color: var(--muted); word-break: break-all; }
     .ats-url a { color: var(--muted); text-decoration: none; }
     .ats-url a:hover { color: var(--seafoam); }
-
     .not-found { font-family: Georgia, serif; font-style: italic; color: var(--muted); font-size: .95rem; }
     .ats-item + .ats-item { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-solid); }
-
     .scanned-section { margin-top: 1.25rem; padding-top: .75rem; border-top: 1px solid var(--border-solid); }
     .scanned-label { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: .35rem; }
     .scanned-url { font-size: .68rem; color: #3d4f62; display: block; line-height: 1.6; }
-
     .footer-label { margin-top: 1.5rem; font-family: Georgia, serif; font-style: italic; font-size: .72rem; color: var(--muted); }
 
-    /* ── USAGE COUNTER ── */
+    /* ── USAGE BAR ── */
     .usage-bar {
       width: 100%; max-width: 500px; margin-top: 12px;
       display: grid; grid-template-columns: repeat(3, 1fr);
       border: 1px solid var(--border-solid);
-      background: rgba(11,18,32,0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(11,18,32,0.85); backdrop-filter: blur(8px);
       opacity: 0;
     }
-    .usage-stat {
-      padding: 14px 12px; text-align: center;
-      border-right: 1px solid var(--border-solid);
-      position: relative;
-    }
+    .usage-stat { padding: 14px 12px; text-align: center; border-right: 1px solid var(--border-solid); position: relative; }
     .usage-stat:last-child { border-right: none; }
-    .usage-number {
-      font-family: Georgia, serif; font-style: italic;
-      font-size: 1.5rem; font-weight: 400;
-      color: var(--seafoam); display: block; margin-bottom: 4px;
-    }
+    .usage-number { font-family: Georgia, serif; font-style: italic; font-size: 1.5rem; font-weight: 400; color: var(--seafoam); display: block; margin-bottom: 4px; }
     .usage-number.danger { color: var(--red-zissou); }
-    .usage-label {
-      font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
-      display: block;
-    }
-    .usage-bar-fill {
-      position: absolute; bottom: 0; left: 0; height: 2px;
-      background: var(--seafoam); width: 0%; transition: width 1.2s cubic-bezier(.22,1,.36,1);
-    }
+    .usage-label { font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); display: block; }
+    .usage-bar-fill { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--seafoam); width: 0%; transition: width 1.2s cubic-bezier(.22,1,.36,1); }
     .usage-bar-fill.danger { background: var(--red-zissou); }
-    .usage-note {
-      width: 100%; max-width: 500px; text-align: center;
-      font-size: .6rem; letter-spacing: .12em; color: var(--muted);
-      margin-top: 8px;
-      font-family: Georgia, serif; font-style: italic;
-      opacity: 0;
-    }
+    .usage-note { width: 100%; max-width: 500px; text-align: center; font-size: .6rem; letter-spacing: .12em; color: var(--muted); margin-top: 8px; font-family: Georgia, serif; font-style: italic; opacity: 0; }
   </style>
 </head>
 <body>
 
-<!-- ── CINEMATIC BACKGROUND ── -->
-<div class="cinematic-bg">
-  <div class="bg-photo"></div>
-  <div class="color-grade"></div>
-  <div class="vignette"></div>
-  <div class="letterbox-top"></div>
-  <div class="letterbox-bottom"></div>
+<!-- ── SHIP SCENE ── -->
+<div class="ship-scene">
+  <svg id="ship-svg" viewBox="0 0 1440 700"
+       xmlns="http://www.w3.org/2000/svg"
+       preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="hullGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#182438"/>
+        <stop offset="100%" stop-color="#0e1824"/>
+      </linearGradient>
+      <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#091522" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#030810"/>
+      </linearGradient>
+      <filter id="winGlow">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- Stars -->
+    <g id="svg-stars"></g>
+
+    <!-- Ocean -->
+    <rect x="0" y="468" width="1440" height="232" fill="url(#seaGrad)"/>
+
+    <!-- ── MAIN HULL ── -->
+    <!-- Flat stern on left, tapered bow on right -->
+    <path d="M 92,278 L 1268,278 Q 1368,280 1378,360 L 1378,468 L 1365,548 L 92,548 Z"
+          fill="url(#hullGrad)" stroke="#243650" stroke-width="2.5"/>
+
+    <!-- Below-waterline overlay (darker, teal-tinted) -->
+    <path d="M 92,468 L 1378,468 L 1365,548 L 92,548 Z"
+          fill="#060d18" opacity="0.65"/>
+
+    <!-- Waterline boot stripe -->
+    <rect x="92" y="464" width="1283" height="5" fill="#4ecdc4" opacity="0.12"/>
+    <line x1="92" y1="470" x2="1378" y2="470" stroke="#4ecdc4" stroke-width="1.5" opacity="0.18"/>
+
+    <!-- ── DECK SEPARATOR LINES ── -->
+    <!-- Between Deck A and B -->
+    <line x1="92"  y1="343" x2="1332" y2="343" stroke="#243650" stroke-width="1.5"/>
+    <!-- Between Deck B and C -->
+    <line x1="92"  y1="408" x2="1352" y2="408" stroke="#243650" stroke-width="1.5"/>
+
+    <!-- ── SUPERSTRUCTURE ── -->
+    <rect x="148" y="226" width="692" height="52"
+          fill="#182438" stroke="#243650" stroke-width="1.5"/>
+
+    <!-- ── BRIDGE ── -->
+    <rect x="200" y="186" width="362" height="40"
+          fill="#182438" stroke="#243650" stroke-width="1.5"/>
+    <!-- Bridge panoramic window strip -->
+    <rect x="213" y="194" width="334" height="22" rx="2"
+          fill="#4ecdc4" opacity="0.06"/>
+    <rect x="213" y="194" width="334" height="22" rx="2"
+          fill="none" stroke="#4ecdc4" stroke-width="1" opacity="0.22"/>
+
+    <!-- ── MAST ── -->
+    <line x1="340" y1="78"  x2="340" y2="186" stroke="#b8924a" stroke-width="2.5" opacity="0.5"/>
+    <!-- Cross arm -->
+    <line x1="282" y1="108" x2="402" y2="108" stroke="#b8924a" stroke-width="1.5" opacity="0.38"/>
+    <!-- Guy wires -->
+    <line x1="340" y1="108" x2="202" y2="186" stroke="#b8924a" stroke-width="0.8" opacity="0.18"/>
+    <line x1="340" y1="108" x2="490" y2="186" stroke="#b8924a" stroke-width="0.8" opacity="0.18"/>
+    <!-- Radar dish -->
+    <ellipse cx="340" cy="80" rx="21" ry="9"
+             fill="none" stroke="#4ecdc4" stroke-width="1.5" opacity="0.42"/>
+    <line x1="340" y1="71" x2="340" y2="89" stroke="#4ecdc4" stroke-width="1" opacity="0.28"/>
+    <!-- Antenna tip -->
+    <line x1="340" y1="58" x2="340" y2="78" stroke="#b8924a" stroke-width="1" opacity="0.5"/>
+
+    <!-- ── FLAG ── -->
+    <polygon points="340,44 378,53 340,62" fill="#e63946" opacity="0.72"/>
+
+    <!-- ── FUNNEL / SMOKESTACK ── -->
+    <rect x="268" y="156" width="50" height="70" rx="4"
+          fill="#182438" stroke="#243650" stroke-width="1.5"/>
+    <rect x="260" y="150" width="66" height="14" rx="3"
+          fill="#1a2d3f" stroke="#243650" stroke-width="1"/>
+    <!-- Exhaust smoke -->
+    <circle cx="288" cy="135" r="10" fill="#243650" opacity="0.20"/>
+    <circle cx="297" cy="118" r="7"  fill="#243650" opacity="0.14"/>
+    <circle cx="282" cy="104" r="5"  fill="#243650" opacity="0.09"/>
+
+    <!-- ── HELIPAD (top-right of main deck) ── -->
+    <rect x="945"  y="276" width="268" height="3" fill="#4ecdc4" opacity="0.18"/>
+    <circle cx="1079" cy="256" r="33"
+            fill="none" stroke="#4ecdc4" stroke-width="1" opacity="0.14"/>
+    <text x="1079" y="261" text-anchor="middle"
+          font-family="Georgia,serif" font-size="20"
+          fill="#4ecdc4" opacity="0.16">H</text>
+    <!-- Helipad crosshairs -->
+    <line x1="1046" y1="256" x2="1112" y2="256" stroke="#4ecdc4" stroke-width="0.8" opacity="0.10"/>
+    <line x1="1079" y1="223" x2="1079" y2="289" stroke="#4ecdc4" stroke-width="0.8" opacity="0.10"/>
+
+    <!-- ── ANCHOR CHAIN (bow) ── -->
+    <circle cx="1280" cy="378" r="20" fill="none" stroke="#243650" stroke-width="2" opacity="0.7"/>
+    <circle cx="1280" cy="378" r="13" fill="#0c1624" opacity="0.9"/>
+
+    <!-- ── SHIP NAME ON HULL ── -->
+    <text x="600" y="515" text-anchor="middle"
+          font-family="Georgia,serif" font-style="italic" font-size="26"
+          fill="#4ecdc4" opacity="0.22" letter-spacing="10">BELAFONTE</text>
+
+    <!-- Room grids (JS-generated) -->
+    <g id="rooms"></g>
+  </svg>
 </div>
 
 <!-- Film grain -->
@@ -285,24 +316,12 @@
 <!-- Bubbles -->
 <canvas id="bubble-canvas"></canvas>
 
-<!-- Ocean icon floaters — same as burkeruder.ai -->
-<div class="ocean-floats">
-  <span style="left:7%;  top:22%; animation-duration:7.2s; font-size:1.6rem;">🐠</span>
-  <span style="left:89%; top:16%; animation-duration:9.8s; font-size:1.1rem;">🔱</span>
-  <span style="left:4%;  top:62%; animation-duration:8.1s; font-size:1.4rem;">⚓</span>
-  <span style="left:93%; top:57%; animation-duration:11s;  font-size:1.3rem;">🐡</span>
-  <span style="left:86%; top:78%; animation-duration:6.7s; font-size:1.2rem;">🔭</span>
-  <span style="left:11%; top:80%; animation-duration:9.2s; font-size:1.5rem;">🦈</span>
-  <span style="left:51%; top:9%;  animation-duration:8.8s; font-size:.95rem;">⭐</span>
-  <span style="left:29%; top:91%; animation-duration:7.5s; font-size:1.1rem;">🌊</span>
-</div>
-
 <!-- ── MARQUEE ── -->
 <div class="marquee-wrap">
   <div class="marquee-track">
-    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
-    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
-    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
+    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday · ashby ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
+    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday · ashby ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
+    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday · ashby ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
   </div>
 </div>
 
@@ -321,7 +340,6 @@
     <p class="footer-label">"You know, I haven't found a job with a mystery ATS since the war." — Steve Zissou</p>
   </div>
 
-  <!-- Usage counters -->
   <div class="usage-bar" id="usage-bar">
     <div class="usage-stat">
       <span class="usage-number" id="u-used">—</span>
@@ -345,6 +363,132 @@
 // ── CARD ENTRANCE ──
 gsap.to('#card', { opacity:1, scale:1, y:0, duration:1.4, ease:'back.out(1.5)', delay:.3 });
 
+// ── SHIP: STARS ──
+(function buildStars() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const g  = document.getElementById('svg-stars');
+  for (let i = 0; i < 140; i++) {
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', (Math.random() * 1440).toFixed(1));
+    c.setAttribute('cy', (Math.random() * 430).toFixed(1));
+    c.setAttribute('r',  (0.3 + Math.random() * 1.4).toFixed(2));
+    c.setAttribute('fill', `rgba(195,215,228,${(0.25 + Math.random() * 0.75).toFixed(2)})`);
+    g.appendChild(c);
+  }
+})();
+
+// ── SHIP: ROOM GRIDS ──
+(function buildRooms() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const g  = document.getElementById('rooms');
+
+  const decks = [
+    {
+      y1: 278, y2: 343, x1: 92, x2: 1268,
+      labels: ['NAVIGATION','CAPTAIN\'S CABIN','FIRST MATE','OFFICERS MESS','CREW BERTH A','CREW BERTH B','CREW BERTH C','COMMUNICATIONS','COLD STORAGE','ARMORY'],
+      winRow: 0.28,
+    },
+    {
+      y1: 343, y2: 408, x1: 92, x2: 1295,
+      labels: ['ENGINE ROOM','','GENERATOR','ELECTRICAL','FUEL PUMPS','PROVISIONS','MEDICAL BAY','LAUNDRY','WET SUITS','DIVE TANKS'],
+      winRow: 0.28,
+    },
+    {
+      y1: 408, y2: 468, x1: 92, x2: 1320,
+      labels: ['BALLAST A','BALLAST B','FUEL TANK','FUEL TANK','BILGE','BILGE','BILGE','BILGE','KEEL FWD','KEEL AFT'],
+      winRow: null, // below waterline, round portholes instead
+    },
+    {
+      y1: 226, y2: 278, x1: 148, x2: 840,
+      labels: ['DIVE PREP','SPECIMEN TANKS','PHOTO LAB','RESEARCH LAB','RADIO ROOM','OFFICERS\' MESS'],
+      winRow: 0.22,
+    },
+  ];
+
+  decks.forEach(deck => {
+    const n      = deck.labels.length;
+    const roomW  = (deck.x2 - deck.x1) / n;
+    const deckH  = deck.y2 - deck.y1;
+    const isKeel = deck.winRow === null;
+
+    for (let i = 0; i < n; i++) {
+      const rx = deck.x1 + i * roomW;
+
+      // Room divider
+      if (i > 0) {
+        const ln = document.createElementNS(ns, 'line');
+        ln.setAttribute('x1', rx.toFixed(1)); ln.setAttribute('y1', deck.y1);
+        ln.setAttribute('x2', rx.toFixed(1)); ln.setAttribute('y2', deck.y2);
+        ln.setAttribute('stroke', '#243650'); ln.setAttribute('stroke-width', '1');
+        g.appendChild(ln);
+      }
+
+      // Windows
+      if (!isKeel) {
+        const winH = Math.min(13, deckH * 0.21);
+        const winW = Math.min(18, roomW * 0.22);
+        const winY = deck.y1 + deckH * deck.winRow;
+
+        for (let w = 0; w < 2; w++) {
+          const winX = rx + roomW * (w === 0 ? 0.16 : 0.56);
+          const lit  = Math.random() > 0.22;
+
+          if (lit) {
+            // Soft glow behind window
+            const gl = document.createElementNS(ns, 'rect');
+            gl.setAttribute('x',      (winX - 4).toFixed(1));
+            gl.setAttribute('y',      (winY - 4).toFixed(1));
+            gl.setAttribute('width',  (winW + 8).toFixed(1));
+            gl.setAttribute('height', (winH + 8).toFixed(1));
+            gl.setAttribute('rx', '3');
+            gl.setAttribute('fill', '#f2dc6a');
+            gl.setAttribute('opacity', '0.07');
+            g.appendChild(gl);
+          }
+
+          const rect = document.createElementNS(ns, 'rect');
+          rect.setAttribute('x',      winX.toFixed(1));
+          rect.setAttribute('y',      winY.toFixed(1));
+          rect.setAttribute('width',  winW.toFixed(1));
+          rect.setAttribute('height', winH.toFixed(1));
+          rect.setAttribute('rx', '2');
+          rect.setAttribute('fill', lit ? '#f2dc6a' : '#07101c');
+          if (lit && Math.random() > 0.6) {
+            rect.classList.add('win-flicker');
+            rect.style.animationDuration  = (2.5 + Math.random() * 7) + 's';
+            rect.style.animationDelay     = (Math.random() * 5) + 's';
+          }
+          g.appendChild(rect);
+        }
+      } else {
+        // Keel deck: small round portholes
+        const ph = document.createElementNS(ns, 'circle');
+        ph.setAttribute('cx', (rx + roomW * 0.5).toFixed(1));
+        ph.setAttribute('cy', (deck.y1 + deckH * 0.4).toFixed(1));
+        ph.setAttribute('r',  '7');
+        ph.setAttribute('fill', '#07101c');
+        ph.setAttribute('stroke', '#243650'); ph.setAttribute('stroke-width', '1');
+        g.appendChild(ph);
+      }
+
+      // Department label
+      if (deck.labels[i]) {
+        const lbl = document.createElementNS(ns, 'text');
+        lbl.setAttribute('x', (rx + roomW / 2).toFixed(1));
+        lbl.setAttribute('y', (deck.y2 - deckH * 0.12).toFixed(1));
+        lbl.setAttribute('text-anchor', 'middle');
+        lbl.setAttribute('font-family', 'Georgia,serif');
+        lbl.setAttribute('font-style', 'italic');
+        lbl.setAttribute('font-size', '7.5');
+        lbl.setAttribute('fill', '#4ecdc4');
+        lbl.setAttribute('opacity', '0.38');
+        lbl.textContent = deck.labels[i];
+        g.appendChild(lbl);
+      }
+    }
+  });
+})();
+
 // ── FILM GRAIN ──
 const grainCanvas = document.getElementById('grain-canvas');
 const gCtx = grainCanvas.getContext('2d');
@@ -354,11 +498,10 @@ let gFrame = 0;
 function renderGrain() {
   if (++gFrame % 3 === 0) {
     const w = grainCanvas.width, h = grainCanvas.height;
-    const img = gCtx.createImageData(w, h);
-    const d = img.data;
+    const img = gCtx.createImageData(w, h); const d = img.data;
     for (let i = 0; i < d.length; i += 4) {
       const v = Math.random() * 255 | 0;
-      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 18;
+      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 16;
     }
     gCtx.putImageData(img, 0, 0);
   }
@@ -371,39 +514,24 @@ const bc = document.getElementById('bubble-canvas');
 const bCtx = bc.getContext('2d');
 function resizeBC() { bc.width = window.innerWidth; bc.height = window.innerHeight; }
 resizeBC(); window.addEventListener('resize', resizeBC);
-
-const bubbles = Array.from({length: 60}, () => ({
-  x:    Math.random() * window.innerWidth,
-  y:    window.innerHeight + Math.random() * window.innerHeight,
-  r:    .8 + Math.random() * 3.2,
-  vy:   .25 + Math.random() * .7,
-  vx:   (Math.random() - .5) * .3,
-  o:    .06 + Math.random() * .18,
+const bubbles = Array.from({length: 55}, () => ({
+  x: Math.random() * window.innerWidth,
+  y: window.innerHeight + Math.random() * window.innerHeight,
+  r: .7 + Math.random() * 2.8, vy: .2 + Math.random() * .6,
+  vx: (Math.random() - .5) * .25, o: .05 + Math.random() * .15,
   phase: Math.random() * Math.PI * 2,
 }));
-
 function bubbleLoop() {
   bCtx.clearRect(0, 0, bc.width, bc.height);
-  const t = Date.now() * 0.001;
+  const t = Date.now() * .001;
   for (const b of bubbles) {
-    b.y -= b.vy;
-    b.x += b.vx + Math.sin(t * .5 + b.phase) * .25;
-    if (b.y < -10) {
-      b.y = bc.height + 10;
-      b.x = Math.random() * bc.width;
-    }
+    b.y -= b.vy; b.x += b.vx + Math.sin(t * .4 + b.phase) * .22;
+    if (b.y < -8) { b.y = bc.height + 8; b.x = Math.random() * bc.width; }
     if (b.x < 0) b.x = bc.width; if (b.x > bc.width) b.x = 0;
-
-    // rim highlight — seafoam teal like the palette
     bCtx.beginPath(); bCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-    bCtx.strokeStyle = `rgba(78,205,196,${b.o})`;
-    bCtx.lineWidth = .8;
-    bCtx.stroke();
-
-    // tiny specular
-    bCtx.beginPath(); bCtx.arc(b.x - b.r * .3, b.y - b.r * .3, b.r * .25, 0, Math.PI * 2);
-    bCtx.fillStyle = `rgba(200,240,238,${b.o * .8})`;
-    bCtx.fill();
+    bCtx.strokeStyle = `rgba(78,205,196,${b.o})`; bCtx.lineWidth = .7; bCtx.stroke();
+    bCtx.beginPath(); bCtx.arc(b.x - b.r * .3, b.y - b.r * .3, b.r * .22, 0, Math.PI * 2);
+    bCtx.fillStyle = `rgba(200,240,238,${b.o * .8})`; bCtx.fill();
   }
   requestAnimationFrame(bubbleLoop);
 }
@@ -453,25 +581,19 @@ async function loadUsage() {
     const { count, cap, remaining } = data;
     const pct    = Math.min(100, (count / cap) * 100);
     const danger = pct >= 80;
-
     function animateCount(el, target) {
       const obj = { val: 0 };
       gsap.to(obj, { val: target, duration: 1.6, ease: 'power2.out',
         onUpdate() { el.textContent = Math.round(obj.val); } });
     }
-
-    const uUsed      = document.getElementById('u-used');
+    const uUsed = document.getElementById('u-used');
     const uRemaining = document.getElementById('u-remaining');
-    const uFill      = document.getElementById('u-fill');
-
+    const uFill = document.getElementById('u-fill');
     if (danger) { uUsed.classList.add('danger'); uFill.classList.add('danger'); }
-
-    animateCount(uUsed, count);
-    animateCount(uRemaining, remaining);
-
-    gsap.to(['#usage-bar', '#usage-note'], { opacity:1, y:0, duration:.8, delay:.9, stagger:.1, ease:'power2.out' });
+    animateCount(uUsed, count); animateCount(uRemaining, remaining);
+    gsap.to(['#usage-bar','#usage-note'], { opacity:1, y:0, duration:.8, delay:.9, stagger:.1, ease:'power2.out' });
     setTimeout(() => { uFill.style.width = pct + '%'; }, 1000);
-  } catch { /* usage api not available locally */ }
+  } catch {}
 }
 loadUsage();
 
