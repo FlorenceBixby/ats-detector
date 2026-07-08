@@ -241,9 +241,9 @@
 
     <!-- ── DECK SEPARATOR LINES ── -->
     <!-- Between Deck A and B -->
-    <line x1="92"  y1="343" x2="1332" y2="343" stroke="#243650" stroke-width="1.5"/>
+    <line x1="92"  y1="343" x2="1332" y2="343" stroke="#3a5878" stroke-width="2"/>
     <!-- Between Deck B and C -->
-    <line x1="92"  y1="408" x2="1352" y2="408" stroke="#243650" stroke-width="1.5"/>
+    <line x1="92"  y1="408" x2="1352" y2="408" stroke="#3a5878" stroke-width="2"/>
 
     <!-- ── SUPERSTRUCTURE ── -->
     <rect x="148" y="226" width="692" height="52"
@@ -303,7 +303,7 @@
     <!-- ── SHIP NAME ON HULL ── -->
     <text x="600" y="515" text-anchor="middle"
           font-family="Georgia,serif" font-style="italic" font-size="26"
-          fill="#4ecdc4" opacity="0.22" letter-spacing="10">BELAFONTE</text>
+          fill="#4ecdc4" opacity="0.38" letter-spacing="10">BELAFONTE</text>
 
     <!-- Room grids (JS-generated) -->
     <g id="rooms"></g>
@@ -419,14 +419,14 @@ gsap.to('#card', { opacity:1, scale:1, y:0, duration:1.4, ease:'back.out(1.5)', 
         const ln = document.createElementNS(ns, 'line');
         ln.setAttribute('x1', rx.toFixed(1)); ln.setAttribute('y1', deck.y1);
         ln.setAttribute('x2', rx.toFixed(1)); ln.setAttribute('y2', deck.y2);
-        ln.setAttribute('stroke', '#243650'); ln.setAttribute('stroke-width', '1');
+        ln.setAttribute('stroke', '#2e4a65'); ln.setAttribute('stroke-width', '1.5');
         g.appendChild(ln);
       }
 
       // Windows
       if (!isKeel) {
-        const winH = Math.min(13, deckH * 0.21);
-        const winW = Math.min(18, roomW * 0.22);
+        const winH = Math.min(20, deckH * 0.32);
+        const winW = Math.min(28, roomW * 0.30);
         const winY = deck.y1 + deckH * deck.winRow;
 
         for (let w = 0; w < 2; w++) {
@@ -442,7 +442,7 @@ gsap.to('#card', { opacity:1, scale:1, y:0, duration:1.4, ease:'back.out(1.5)', 
             gl.setAttribute('height', (winH + 8).toFixed(1));
             gl.setAttribute('rx', '3');
             gl.setAttribute('fill', '#f2dc6a');
-            gl.setAttribute('opacity', '0.07');
+            gl.setAttribute('opacity', '0.14');
             g.appendChild(gl);
           }
 
@@ -479,9 +479,9 @@ gsap.to('#card', { opacity:1, scale:1, y:0, duration:1.4, ease:'back.out(1.5)', 
         lbl.setAttribute('text-anchor', 'middle');
         lbl.setAttribute('font-family', 'Georgia,serif');
         lbl.setAttribute('font-style', 'italic');
-        lbl.setAttribute('font-size', '7.5');
+        lbl.setAttribute('font-size', '11');
         lbl.setAttribute('fill', '#4ecdc4');
-        lbl.setAttribute('opacity', '0.38');
+        lbl.setAttribute('opacity', '0.65');
         lbl.textContent = deck.labels[i];
         g.appendChild(lbl);
       }
