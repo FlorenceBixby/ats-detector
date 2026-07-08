@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
       - name: Deploy
         run: npx wrangler pages deploy public --project-name=ats-detector
         env:

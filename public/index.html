@@ -272,6 +272,47 @@
     .scanned-url { font-size:.68rem;color:#3d4f62;display:block;line-height:1.6; }
 
     .footer-label { margin-top:1.5rem;font-family:Georgia,serif;font-style:italic;font-size:.72rem;color:var(--muted); }
+
+    /* ── USAGE COUNTER ── */
+    .usage-bar {
+      width:100%;max-width:500px;
+      margin-top:12px;
+      display:grid;grid-template-columns:repeat(3,1fr);
+      border:1px solid var(--border-solid);
+      background:rgba(11,18,32,0.85);
+      backdrop-filter:blur(8px);
+      opacity:0;
+    }
+    .usage-stat {
+      padding:14px 12px;text-align:center;
+      border-right:1px solid var(--border-solid);
+      position:relative;
+    }
+    .usage-stat:last-child { border-right:none; }
+    .usage-number {
+      font-family:Georgia,serif;font-style:italic;
+      font-size:1.5rem;font-weight:400;
+      color:var(--seafoam);
+      display:block;margin-bottom:4px;
+    }
+    .usage-number.danger { color:var(--red-zissou); }
+    .usage-label {
+      font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+      display:block;
+    }
+    .usage-bar-fill {
+      position:absolute;bottom:0;left:0;height:2px;
+      background:var(--seafoam);width:0%;transition:width 1.2s cubic-bezier(.22,1,.36,1);
+    }
+    .usage-bar-fill.danger { background:var(--red-zissou); }
+    .usage-note {
+      width:100%;max-width:500px;
+      text-align:center;
+      font-size:.6rem;letter-spacing:.12em;color:var(--muted);
+      margin-top:8px;
+      font-family:Georgia,serif;font-style:italic;
+      opacity:0;
+    }
   </style>
 </head>
 <body>
@@ -383,7 +424,7 @@
 </div>
 
 <!-- ── UI ── -->
-<div class="ui-wrapper">
+<div class="ui-wrapper" style="flex-direction:column;">
   <div class="card" id="card">
     <span class="chapter-label">Chapter One</span>
     <h1>The ATS Detector</h1>
@@ -396,6 +437,24 @@
     <div class="result" id="result"></div>
     <p class="footer-label">"You know, I haven't found a job with a mystery ATS since the war." — Steve Zissou</p>
   </div>
+
+  <!-- Usage counters -->
+  <div class="usage-bar" id="usage-bar">
+    <div class="usage-stat">
+      <span class="usage-number" id="u-used">—</span>
+      <span class="usage-label">Sessions Used</span>
+      <div class="usage-bar-fill" id="u-fill"></div>
+    </div>
+    <div class="usage-stat">
+      <span class="usage-number" id="u-remaining">—</span>
+      <span class="usage-label">Remaining</span>
+    </div>
+    <div class="usage-stat">
+      <span class="usage-number" id="u-cap">500</span>
+      <span class="usage-label">Monthly Cap</span>
+    </div>
+  </div>
+  <p class="usage-note" id="usage-note">Browser sessions this month — limit set to keep costs under $5</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -517,6 +576,38 @@ async function detect(){
     res.classList.add('visible');
   } finally { btn.disabled=false; spin.classList.remove('visible'); }
 }
+
+// ── USAGE COUNTERS ──
+async function loadUsage() {
+  try {
+    const r = await fetch('/api/usage');
+    const data = await r.json();
+    const { count, cap, remaining } = data;
+    const pct = Math.min(100, (count / cap) * 100);
+    const danger = pct >= 80;
+
+    function animateCount(el, target) {
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: target, duration: 1.6, ease: 'power2.out',
+        onUpdate() { el.textContent = Math.round(obj.val); }
+      });
+    }
+
+    const uUsed = document.getElementById('u-used');
+    const uRemaining = document.getElementById('u-remaining');
+    const uFill = document.getElementById('u-fill');
+
+    if (danger) { uUsed.classList.add('danger'); uFill.classList.add('danger'); }
+
+    animateCount(uUsed, count);
+    animateCount(uRemaining, remaining);
+
+    gsap.to(['#usage-bar', '#usage-note'], { opacity: 1, y: 0, duration: 0.8, delay: 0.9, stagger: 0.1, ease: 'power2.out' });
+    setTimeout(() => { uFill.style.width = pct + '%'; }, 1000);
+  } catch { /* usage api not available locally */ }
+}
+loadUsage();
 
 function scannedHtml(urls){
   if(!urls?.length)return'';
