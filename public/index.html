@@ -3,30 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The ATS Investigation — ats.burkeruder.ai</title>
+  <title>ATS Detector — ats.burkeruder.ai</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --mk-dark:    #0D0A04;
-      --bg:         #141008;
-      --fg:         #EDE8D8;
-      --accent:     #C4963B;
-      --amber:      #C4963B;
-      --pine:       #4A5E3B;
-      --rust:       #9B4B22;
-      --card-bg:    #1C1609;
-      --border:     rgba(196,150,59,0.22);
-      --border-solid: #3A2A0E;
-      --muted:      #8A7850;
-      --ivory:      #EDE8D8;
-      --khaki:      #C4B48A;
+      --ocean-deep: #080d18;
+      --bg:         #0c1220;
+      --fg:         #e8e4d9;
+      --accent:     #4ecdc4;
+      --seafoam:    #4ecdc4;
+      --red-zissou: #e63946;
+      --sand:       #b8924a;
+      --card-bg:    #111827;
+      --border:     rgba(78,205,196,0.22);
+      --border-solid: #1e2d3d;
+      --muted:      #6b7a8d;
+      --ivory:      #f0ede6;
     }
 
     html, body { width: 100%; height: 100%; overflow: hidden; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--mk-dark);
+      background: var(--ocean-deep);
       color: var(--fg);
     }
 
@@ -36,36 +35,35 @@
     .bg-photo {
       position: absolute;
       inset: -8%;
-      background-image: url('https://images.unsplash.com/photo-1706842331573-034ffed5d76d?auto=format&fit=crop&w=1920&q=85');
+      background-image: url('https://images.unsplash.com/photo-1502209524164-acea936639a2?auto=format&fit=crop&w=1920&q=85');
       background-size: cover;
-      background-position: center 55%;
+      background-position: center 40%;
       animation: kenBurns 50s ease-in-out infinite alternate;
-      /* shift cool grey coast → warm amber Moonrise Kingdom palette */
-      filter: saturate(0.65) brightness(0.38) sepia(0.55) hue-rotate(-8deg);
+      filter: saturate(0.7) brightness(0.35) hue-rotate(195deg);
     }
     @keyframes kenBurns {
-      from { transform: scale(1)    translate(0,   0   ); }
-      to   { transform: scale(1.1)  translate(-1.5%, 1%); }
+      from { transform: scale(1)   translate(0,    0); }
+      to   { transform: scale(1.1) translate(-1.5%, 1%); }
     }
 
-    /* warm amber film grade */
+    /* deep ocean teal grade */
     .color-grade {
       position: absolute; inset: 0;
       background: linear-gradient(
-        170deg,
-        rgba(90, 50, 5, 0.50) 0%,
-        rgba(50, 32, 4, 0.28) 45%,
-        rgba(12, 8, 2,  0.62) 100%
+        180deg,
+        rgba(8,13,24,0.55)  0%,
+        rgba(4,20,35,0.25)  40%,
+        rgba(6,14,26,0.65) 100%
       );
     }
 
     .vignette {
       position: absolute; inset: 0;
       background: radial-gradient(
-        ellipse at 50% 48%,
-        transparent 15%,
-        rgba(6, 4, 1, 0.60) 60%,
-        rgba(6, 4, 1, 0.94) 100%
+        ellipse at 50% 45%,
+        transparent 18%,
+        rgba(4,8,18,0.55) 58%,
+        rgba(4,8,18,0.92) 100%
       );
     }
 
@@ -79,11 +77,26 @@
     /* ── FILM GRAIN ── */
     #grain-canvas {
       position: fixed; inset: 0; pointer-events: none; z-index: 2;
-      opacity: 0.055; mix-blend-mode: screen;
+      opacity: 0.05; mix-blend-mode: screen;
     }
 
-    /* ── FIREFLIES ── */
-    #firefly-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
+    /* ── BUBBLES ── */
+    #bubble-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
+
+    /* ── FLOATING OCEAN ICONS ── */
+    .ocean-floats {
+      position: fixed; inset: 0; pointer-events: none; z-index: 4; overflow: hidden;
+    }
+    .ocean-floats span {
+      position: absolute;
+      font-size: 1.4rem; opacity: 0.1; user-select: none;
+      animation: iconDrift linear infinite;
+    }
+    @keyframes iconDrift {
+      0%   { transform: translateY(0)    rotate(0deg); }
+      50%  { transform: translateY(-14px) rotate(4deg); }
+      100% { transform: translateY(0)    rotate(0deg); }
+    }
 
     /* ── MARQUEE ── */
     .marquee-wrap {
@@ -94,11 +107,11 @@
     }
     .marquee-wrap::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
-      height: 3px; background: var(--amber);
+      height: 3px; background: var(--red-zissou);
     }
     .marquee-track {
       display: flex; gap: 0;
-      animation: marquee 34s linear infinite;
+      animation: marquee 32s linear infinite;
       width: max-content;
     }
     .marquee-track span {
@@ -120,40 +133,23 @@
       padding: 2.5rem 2.75rem;
       position: relative; text-align: center;
       opacity: 0; transform: scale(.78) translateY(40px);
-      box-shadow: 10px 10px 0 rgba(196,150,59,.12);
+      box-shadow: 10px 10px 0 rgba(78,205,196,.15);
     }
-    /* Amber top stripe */
+    /* red top stripe — identical to burkeruder.ai */
     .card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
-      height: 3px; background: var(--amber);
+      height: 3px; background: var(--red-zissou);
     }
-    /* Inner border detail */
+    /* inner border detail */
     .card::after {
       content: ''; position: absolute; inset: 10px;
       border: 1px solid var(--border); pointer-events: none; opacity: .5;
     }
 
-    /* Scout badge corner marks */
-    .badge-corner {
-      position: absolute; width: 12px; height: 12px;
-      border-color: var(--amber); border-style: solid; opacity: .4;
-    }
-    .badge-corner.tl { top: 6px;  left: 6px;  border-width: 2px 0 0 2px; }
-    .badge-corner.tr { top: 6px;  right: 6px; border-width: 2px 2px 0 0; }
-    .badge-corner.bl { bottom: 6px; left: 6px;  border-width: 0 0 2px 2px; }
-    .badge-corner.br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
-
-    .field-report-label {
-      display: inline-block;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: .62rem; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: .3rem;
-    }
-
     .chapter-label {
       display: inline-block;
-      font-family: Georgia, serif; font-style: italic; font-size: .82rem;
-      color: var(--amber); letter-spacing: .08em; margin-bottom: 1rem;
+      font-family: Georgia, serif; font-style: italic; font-size: .78rem;
+      color: var(--seafoam); letter-spacing: .08em; margin-bottom: 1rem;
     }
 
     h1 {
@@ -164,24 +160,23 @@
 
     .subtitle {
       font-size: .78rem; color: var(--muted);
-      letter-spacing: .05em; margin-bottom: 1.75rem;
+      letter-spacing: .06em; margin-bottom: 1.75rem;
     }
 
     .divider {
       display: flex; align-items: center; gap: .75rem; margin-bottom: 1.75rem;
     }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-solid); }
-    .divider-diamond { width: 5px; height: 5px; background: var(--amber); transform: rotate(45deg); }
+    .divider-diamond { width: 5px; height: 5px; background: var(--seafoam); transform: rotate(45deg); }
 
     .input-label {
-      display: block; font-family: 'Courier New', Courier, monospace;
-      font-size: .58rem; letter-spacing: .22em; text-transform: uppercase;
+      display: block; font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
       color: var(--muted); margin-bottom: .5rem; text-align: left;
     }
 
     input {
       width: 100%;
-      background: #100C04;
+      background: #0c1220;
       border: 2px solid var(--border-solid);
       color: var(--fg);
       font-family: Georgia, serif; font-style: italic; font-size: 1rem;
@@ -189,26 +184,25 @@
       letter-spacing: .03em; margin-bottom: 1rem;
       transition: border-color .2s, box-shadow .2s;
     }
-    input:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(196,150,59,.1); }
+    input:focus { border-color: var(--seafoam); box-shadow: 0 0 0 3px rgba(78,205,196,.1); }
     input::placeholder { color: var(--muted); font-style: italic; }
 
     button {
       width: 100%; background: transparent;
-      color: var(--amber); border: 2px solid var(--amber);
+      color: var(--seafoam); border: 2px solid var(--seafoam);
       cursor: pointer;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: .62rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+      font-size: .65rem; font-weight: 700; letter-spacing: .25em; text-transform: uppercase;
       padding: .72rem 2rem;
       transition: background .2s, color .2s, letter-spacing .3s, transform .1s;
     }
-    button:hover { background: var(--amber); color: var(--mk-dark); letter-spacing: .36em; }
+    button:hover { background: var(--seafoam); color: var(--ocean-deep); letter-spacing: .32em; }
     button:active { transform: scale(.98); }
     button:disabled { opacity: .4; cursor: not-allowed; }
 
     .spinner {
       display: none; margin: 1.25rem auto 0;
       width: 18px; height: 18px;
-      border: 1.5px solid var(--border-solid); border-top-color: var(--amber);
+      border: 1.5px solid var(--border-solid); border-top-color: var(--seafoam);
       border-radius: 50%; animation: spin .8s linear infinite;
     }
     .spinner.visible { display: block; }
@@ -219,19 +213,19 @@
 
     .result-rule { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; }
     .result-rule::before, .result-rule::after { content: ''; flex: 1; height: 1px; background: var(--border-solid); }
-    .result-rule span { font-family: 'Courier New', Courier, monospace; font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .result-rule span { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 
-    .ats-name { font-family: Georgia, serif; font-style: italic; font-size: 1.7rem; font-weight: 400; color: var(--amber); margin-bottom: .3rem; }
+    .ats-name { font-family: Georgia, serif; font-style: italic; font-size: 1.7rem; font-weight: 400; color: var(--accent); margin-bottom: .3rem; }
     .ats-url { font-size: .72rem; color: var(--muted); word-break: break-all; }
     .ats-url a { color: var(--muted); text-decoration: none; }
-    .ats-url a:hover { color: var(--amber); }
+    .ats-url a:hover { color: var(--seafoam); }
 
     .not-found { font-family: Georgia, serif; font-style: italic; color: var(--muted); font-size: .95rem; }
     .ats-item + .ats-item { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-solid); }
 
     .scanned-section { margin-top: 1.25rem; padding-top: .75rem; border-top: 1px solid var(--border-solid); }
-    .scanned-label { font-family: 'Courier New', Courier, monospace; font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: .35rem; }
-    .scanned-url { font-size: .68rem; color: #5A4A2A; display: block; line-height: 1.6; }
+    .scanned-label { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: .35rem; }
+    .scanned-url { font-size: .68rem; color: #3d4f62; display: block; line-height: 1.6; }
 
     .footer-label { margin-top: 1.5rem; font-family: Georgia, serif; font-style: italic; font-size: .72rem; color: var(--muted); }
 
@@ -240,7 +234,7 @@
       width: 100%; max-width: 500px; margin-top: 12px;
       display: grid; grid-template-columns: repeat(3, 1fr);
       border: 1px solid var(--border-solid);
-      background: rgba(20,16,8,0.88);
+      background: rgba(11,18,32,0.85);
       backdrop-filter: blur(8px);
       opacity: 0;
     }
@@ -253,24 +247,24 @@
     .usage-number {
       font-family: Georgia, serif; font-style: italic;
       font-size: 1.5rem; font-weight: 400;
-      color: var(--amber); display: block; margin-bottom: 4px;
+      color: var(--seafoam); display: block; margin-bottom: 4px;
     }
-    .usage-number.danger { color: var(--rust); }
+    .usage-number.danger { color: var(--red-zissou); }
     .usage-label {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: .52rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+      font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
       display: block;
     }
     .usage-bar-fill {
       position: absolute; bottom: 0; left: 0; height: 2px;
-      background: var(--amber); width: 0%; transition: width 1.2s cubic-bezier(.22,1,.36,1);
+      background: var(--seafoam); width: 0%; transition: width 1.2s cubic-bezier(.22,1,.36,1);
     }
-    .usage-bar-fill.danger { background: var(--rust); }
+    .usage-bar-fill.danger { background: var(--red-zissou); }
     .usage-note {
       width: 100%; max-width: 500px; text-align: center;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: .57rem; letter-spacing: .12em; color: var(--muted);
-      margin-top: 8px; opacity: 0;
+      font-size: .6rem; letter-spacing: .12em; color: var(--muted);
+      margin-top: 8px;
+      font-family: Georgia, serif; font-style: italic;
+      opacity: 0;
     }
   </style>
 </head>
@@ -288,37 +282,43 @@
 <!-- Film grain -->
 <canvas id="grain-canvas"></canvas>
 
-<!-- Fireflies -->
-<canvas id="firefly-canvas"></canvas>
+<!-- Bubbles -->
+<canvas id="bubble-canvas"></canvas>
+
+<!-- Ocean icon floaters — same as burkeruder.ai -->
+<div class="ocean-floats">
+  <span style="left:7%;  top:22%; animation-duration:7.2s; font-size:1.6rem;">🐠</span>
+  <span style="left:89%; top:16%; animation-duration:9.8s; font-size:1.1rem;">🔱</span>
+  <span style="left:4%;  top:62%; animation-duration:8.1s; font-size:1.4rem;">⚓</span>
+  <span style="left:93%; top:57%; animation-duration:11s;  font-size:1.3rem;">🐡</span>
+  <span style="left:86%; top:78%; animation-duration:6.7s; font-size:1.2rem;">🔭</span>
+  <span style="left:11%; top:80%; animation-duration:9.2s; font-size:1.5rem;">🦈</span>
+  <span style="left:51%; top:9%;  animation-duration:8.8s; font-size:.95rem;">⭐</span>
+  <span style="left:29%; top:91%; animation-duration:7.5s; font-size:1.1rem;">🌊</span>
+</div>
 
 <!-- ── MARQUEE ── -->
 <div class="marquee-wrap">
   <div class="marquee-track">
-    <span>◆ ats.burkeruder.ai ◆ khaki scouts investigation unit ◆ new penzance island ◆ greenhouse · lever · workday ◆ field dispatch classified ◆ camp ivanhoe ◆ the great ats hunt ◆ austin, tx ◆</span>
-    <span>◆ ats.burkeruder.ai ◆ khaki scouts investigation unit ◆ new penzance island ◆ greenhouse · lever · workday ◆ field dispatch classified ◆ camp ivanhoe ◆ the great ats hunt ◆ austin, tx ◆</span>
-    <span>◆ ats.burkeruder.ai ◆ khaki scouts investigation unit ◆ new penzance island ◆ greenhouse · lever · workday ◆ field dispatch classified ◆ camp ivanhoe ◆ the great ats hunt ◆ austin, tx ◆</span>
+    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
+    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
+    <span>◆ ats.burkeruder.ai ◆ find their stack ◆ who's hiring with what ◆ greenhouse · lever · workday ◆ team zissou ◆ built by curiosity ◆ austin, tx ◆ submarine optimist ◆ threat vector enthusiast ◆</span>
   </div>
 </div>
 
 <!-- ── UI ── -->
 <div class="ui-wrapper" style="flex-direction:column;">
   <div class="card" id="card">
-    <div class="badge-corner tl"></div>
-    <div class="badge-corner tr"></div>
-    <div class="badge-corner bl"></div>
-    <div class="badge-corner br"></div>
-
-    <div class="field-report-label">Field Report No. 1</div><br>
-    <span class="chapter-label">Khaki Scouts Investigation Unit</span>
-    <h1>The ATS Investigation</h1>
-    <p class="subtitle">Submit a domain. Our scouts will comb the recruiting woods.</p>
+    <span class="chapter-label">Chapter One</span>
+    <h1>The ATS Detector</h1>
+    <p class="subtitle">Enter a domain. We'll find what's behind the hiring curtain.</p>
     <div class="divider"><div class="divider-diamond"></div></div>
     <label class="input-label" for="domain">Company Domain</label>
     <input id="domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false"/>
-    <button id="detect-btn" onclick="detect()">File Report</button>
+    <button id="detect-btn" onclick="detect()">Enquire</button>
     <div class="spinner" id="spinner"></div>
     <div class="result" id="result"></div>
-    <p class="footer-label">"I always wanted to be a Khaki Scout. But they wouldn't have me." — Sam Shakusky</p>
+    <p class="footer-label">"You know, I haven't found a job with a mystery ATS since the war." — Steve Zissou</p>
   </div>
 
   <!-- Usage counters -->
@@ -358,8 +358,7 @@ function renderGrain() {
     const d = img.data;
     for (let i = 0; i < d.length; i += 4) {
       const v = Math.random() * 255 | 0;
-      d[i] = d[i+1] = d[i+2] = v;
-      d[i+3] = 20;
+      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 18;
     }
     gCtx.putImageData(img, 0, 0);
   }
@@ -367,55 +366,48 @@ function renderGrain() {
 }
 renderGrain();
 
-// ── FIREFLIES ──
-const fc = document.getElementById('firefly-canvas');
-const fCtx = fc.getContext('2d');
-function resizeFC() { fc.width = window.innerWidth; fc.height = window.innerHeight; }
-resizeFC(); window.addEventListener('resize', resizeFC);
+// ── BUBBLES ──
+const bc = document.getElementById('bubble-canvas');
+const bCtx = bc.getContext('2d');
+function resizeBC() { bc.width = window.innerWidth; bc.height = window.innerHeight; }
+resizeBC(); window.addEventListener('resize', resizeBC);
 
-const fireflies = Array.from({length: 55}, () => ({
+const bubbles = Array.from({length: 60}, () => ({
   x:    Math.random() * window.innerWidth,
-  y:    Math.random() * window.innerHeight,
-  r:    1.2 + Math.random() * 1.8,
-  vx:   (Math.random() - .5) * .35,
-  vy:   (Math.random() - .5) * .35,
+  y:    window.innerHeight + Math.random() * window.innerHeight,
+  r:    .8 + Math.random() * 3.2,
+  vy:   .25 + Math.random() * .7,
+  vx:   (Math.random() - .5) * .3,
+  o:    .06 + Math.random() * .18,
   phase: Math.random() * Math.PI * 2,
-  freq:  0.6 + Math.random() * 1.2,
-  // warm gold or cool green-gold
-  rgb:  Math.random() > .35 ? '210,168,60' : '155,195,90',
 }));
 
-function fireflyLoop() {
-  fCtx.clearRect(0, 0, fc.width, fc.height);
+function bubbleLoop() {
+  bCtx.clearRect(0, 0, bc.width, bc.height);
   const t = Date.now() * 0.001;
-  for (const f of fireflies) {
-    // gentle drift with slight wander
-    f.x += f.vx + Math.sin(t * .4 + f.phase) * .12;
-    f.y += f.vy + Math.cos(t * .35 + f.phase) * .10;
-    if (f.x > fc.width  + 10) f.x = -10;
-    if (f.x < -10)            f.x = fc.width + 10;
-    if (f.y > fc.height + 10) f.y = -10;
-    if (f.y < -10)            f.y = fc.height + 10;
+  for (const b of bubbles) {
+    b.y -= b.vy;
+    b.x += b.vx + Math.sin(t * .5 + b.phase) * .25;
+    if (b.y < -10) {
+      b.y = bc.height + 10;
+      b.x = Math.random() * bc.width;
+    }
+    if (b.x < 0) b.x = bc.width; if (b.x > bc.width) b.x = 0;
 
-    const pulse = .25 + .75 * Math.pow(Math.abs(Math.sin(t * f.freq + f.phase)), 2);
-    const alpha = pulse * .9;
+    // rim highlight — seafoam teal like the palette
+    bCtx.beginPath(); bCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    bCtx.strokeStyle = `rgba(78,205,196,${b.o})`;
+    bCtx.lineWidth = .8;
+    bCtx.stroke();
 
-    // soft outer glow
-    const glowR = f.r * 9;
-    const grad = fCtx.createRadialGradient(f.x, f.y, 0, f.x, f.y, glowR);
-    grad.addColorStop(0,   `rgba(${f.rgb},${alpha * .55})`);
-    grad.addColorStop(.35, `rgba(${f.rgb},${alpha * .18})`);
-    grad.addColorStop(1,   `rgba(${f.rgb},0)`);
-    fCtx.beginPath(); fCtx.arc(f.x, f.y, glowR, 0, Math.PI*2);
-    fCtx.fillStyle = grad; fCtx.fill();
-
-    // bright core
-    fCtx.beginPath(); fCtx.arc(f.x, f.y, f.r * pulse, 0, Math.PI*2);
-    fCtx.fillStyle = `rgba(255,242,180,${alpha})`; fCtx.fill();
+    // tiny specular
+    bCtx.beginPath(); bCtx.arc(b.x - b.r * .3, b.y - b.r * .3, b.r * .25, 0, Math.PI * 2);
+    bCtx.fillStyle = `rgba(200,240,238,${b.o * .8})`;
+    bCtx.fill();
   }
-  requestAnimationFrame(fireflyLoop);
+  requestAnimationFrame(bubbleLoop);
 }
-fireflyLoop();
+bubbleLoop();
 
 // ── UI ──
 document.getElementById('domain').addEventListener('keydown', e => { if (e.key === 'Enter') detect(); });
@@ -434,7 +426,7 @@ async function detect() {
     if (data.error) {
       res.innerHTML = `<p class="not-found">${data.error}</p>`;
     } else if (!data.found) {
-      res.innerHTML = `<div class="result-rule"><span>Scout Report</span></div>
+      res.innerHTML = `<div class="result-rule"><span>Result</span></div>
         <p class="not-found">No known ATS detected for <em>${data.domain}</em>.</p>
         ${scannedHtml(data.checkedUrls)}`;
     } else {
@@ -442,7 +434,7 @@ async function detect() {
         <div class="ats-name">${d.name}</div>
         ${d.url ? `<div class="ats-url"><a href="${d.url}" target="_blank" rel="noopener">${d.url}</a></div>` : ''}
       </div>`).join('');
-      res.innerHTML = `<div class="result-rule"><span>Intel Acquired</span></div>${items}${scannedHtml(data.checkedUrls)}`;
+      res.innerHTML = `<div class="result-rule"><span>Detected</span></div>${items}${scannedHtml(data.checkedUrls)}`;
     }
     res.classList.add('visible');
     gsap.from('#result',           { opacity:0, y:18, duration:.7,  ease:'power3.out' });
@@ -485,7 +477,7 @@ loadUsage();
 
 function scannedHtml(urls) {
   if (!urls?.length) return '';
-  return `<div class="scanned-section"><div class="scanned-label">Pages Scouted</div>
+  return `<div class="scanned-section"><div class="scanned-label">Pages scanned</div>
     ${urls.map(u => `<span class="scanned-url">${u}</span>`).join('')}</div>`;
 }
 </script>
